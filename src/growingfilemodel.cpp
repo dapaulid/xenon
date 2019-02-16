@@ -4,13 +4,18 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QDebug>
+#include <QColor>
+#include <QBrush>
+#include <QPalette>
+#include <QApplication>
 
 GrowingFileModel::GrowingFileModel(QObject *parent, QString filename):
     QAbstractTableModel(parent),
     m_sFilename(filename),
-    m_Lines(),
+    m_Entries(),
     m_Timer(),
-    m_uLastPos()
+    m_uLastPos(),
+    m_bAlternate(false)
 {
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(timer()));
     update();
@@ -26,9 +31,22 @@ void GrowingFileModel::timer()
      * and not even all of them...
      */
     QFileInfo info(m_sFilename);
-    if (info.size() > m_uLastPos) {
+    qint64 uFileSize = info.size();
+    if (uFileSize < m_uLastPos) {
+        clear();
+    }
+    if (uFileSize > m_uLastPos) {
         update();
     }
+}
+
+void GrowingFileModel::clear()
+{
+    beginResetModel();
+    m_Entries.clear();
+    m_uLastPos = 0;
+    m_bAlternate = false;
+    endResetModel();
 }
 
 void GrowingFileModel::update()
@@ -44,20 +62,29 @@ void GrowingFileModel::update()
         return;
     }
 
-    int lastSize = m_Lines.size();
+    int lastSize = m_Entries.size();
 
     QTextStream in(&file);
     in.seek(m_uLastPos);
     while (!in.atEnd()) {
         QString line = in.readLine();
         qDebug() << line;
-        m_Lines.append(line);
+        Entry e;
+        e.m_sText = line;
+        e.m_ts = QDateTime::currentDateTime();
+
+        if (!m_Entries.empty() && m_Entries.last().m_ts.msecsTo(e.m_ts) >= 500) {
+            m_bAlternate = !m_bAlternate;
+        }
+
+        e.m_bAlternate = m_bAlternate;
+        m_Entries.append(e);
     }
     m_uLastPos = in.pos();
 
-    qDebug() << lastSize << m_Lines.size() << m_uLastPos;
-    if (m_Lines.size() > lastSize) {
-        beginInsertRows(QModelIndex(), lastSize, m_Lines.size()-1);
+    qDebug() << lastSize << m_Entries.size() << m_uLastPos;
+    if (m_Entries.size() > lastSize) {
+        beginInsertRows(QModelIndex(), lastSize, m_Entries.size()-1);
         endInsertRows();
     }
 
@@ -66,7 +93,7 @@ void GrowingFileModel::update()
 
 int GrowingFileModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   return m_Lines.size();
+   return m_Entries.size();
 }
 
 int GrowingFileModel::columnCount(const QModelIndex & /*parent*/) const
@@ -76,10 +103,20 @@ int GrowingFileModel::columnCount(const QModelIndex & /*parent*/) const
 
 QVariant GrowingFileModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DisplayRole) {
-        switch (index.column()) {
-            case 0: return "???";
-            case 1: return m_Lines[index.row()];
+    const Entry& e = m_Entries[index.row()];
+    switch (role) {
+        case Qt::DisplayRole: {
+            switch (index.column()) {
+                case 0: return e.m_ts.toString("hh:mm:ss.zzz");
+                case 1: return e.m_sText;
+            }
+            break;
+        }
+        case Qt::BackgroundRole: {
+            if (e.m_bAlternate) {
+                return QPalette().brush(QPalette::AlternateBase);
+            }
+            break;
         }
     }
     return QVariant();

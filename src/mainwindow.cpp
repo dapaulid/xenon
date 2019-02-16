@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
         this, SLOT(model_rowsInserted(const QModelIndex&,int,int)) // NO on_ !!!!
     );
     ui->tableView->setModel(model);
+    // don't allow to change row heights
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 
 MainWindow::~MainWindow()

@@ -5,10 +5,18 @@
 #include <QAbstractTableModel>
 #include <QStringList>
 #include <QTimer>
+#include <QDateTime>
 
 class GrowingFileModel : public QAbstractTableModel
 {
     Q_OBJECT
+public:
+    struct Entry {
+        QDateTime m_ts;
+        QString m_sText;
+        bool m_bAlternate;
+    };
+
 public:
     GrowingFileModel(QObject *parent, QString filename);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -20,12 +28,15 @@ public:
 protected slots:
     void update();
     void timer();
+    void clear();
+
 
 protected:
     QString m_sFilename;
-    QStringList m_Lines;
+    QList<Entry> m_Entries;
     QTimer m_Timer;
     qint64 m_uLastPos;
+    bool m_bAlternate;
 };
 
 #endif // GROWINGFILEMODEL_H

@@ -2,10 +2,11 @@ import time
 
 print("Writing output...")
 
-line = 0
+entry = 0
 with open("test.log", "w") as text_file:
 	while True:
-		line += 1
-		text_file.write("This is line %d!\n" % line)
+		entry += 1
+		text_file.write("This is entry %d!\n" % entry)
+		text_file.write("  some more info")
 		text_file.flush()
 		time.sleep(1)
