@@ -96,6 +96,12 @@ QVariant GrowingFileModel::headerData(int section, Qt::Orientation orientation, 
         } else if (orientation == Qt::Vertical) {
             return section+1;
         }
+    } else if (role == Qt::TextAlignmentRole) {
+        if (orientation == Qt::Horizontal) {
+            return Qt::AlignLeft;
+        } else if (orientation == Qt::Vertical) {
+            return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+        }
     }
     return QVariant();
 }
