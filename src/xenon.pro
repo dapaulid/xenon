@@ -14,9 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    growingfilemodel.cpp
+    growingfilemodel.cpp \
+    logentryitemdelegate.cpp \
+    highlighter.cpp
 
 HEADERS  += mainwindow.h \
-    growingfilemodel.h
+    growingfilemodel.h \
+    logentryitemdelegate.h \
+    highlighter.h
 
 FORMS    += mainwindow.ui

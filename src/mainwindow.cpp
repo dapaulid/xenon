@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include "growingfilemodel.h"
+#include "logentryitemdelegate.h"
+#include "highlighter.h"
 
 #include "QDebug"
 #include "QScrollBar"
@@ -18,7 +20,18 @@ MainWindow::MainWindow(QWidget *parent) :
         model, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
         this, SLOT(model_rowsInserted(const QModelIndex&,int,int)) // NO on_ !!!!
     );
+    Highlighters* pHighlighters = new Highlighters;
+    Highlighter* pErrorHiLi = new Highlighter("error");
+    pErrorHiLi->SetPattern("error");
+    pErrorHiLi->SetTextColor(Qt::red);
+    pHighlighters->Add(pErrorHiLi);
+    Highlighter* pWarningHiLi = new Highlighter("warning");
+    pWarningHiLi->SetPattern("warning");
+    pWarningHiLi->SetTextColor(QColor("orange"));
+    pHighlighters->Add(pWarningHiLi);
+    ui->tableView->setItemDelegate(new LogEntryItemDelegate(this, pHighlighters));
     ui->tableView->setModel(model);
+
     // don't allow to change row heights
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
