@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QTextDocument>
 #include <QTableView>
+#include <QDateTime>
 
 LogEntryItemDelegate::LogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters):
     QStyledItemDelegate(apTableView),
@@ -10,7 +11,10 @@ LogEntryItemDelegate::LogEntryItemDelegate(QTableView* apTableView, Highlighters
     m_pHighlighters(apHighlighters),
     m_LinePen()
 {
-    int gridHint = m_pTableView->style()->styleHint(QStyle::SH_Table_GridLineColor, new QStyleOptionViewItemV4());
+    // get color for grid line pen
+    // TODO is there a less ugly way?
+    QStyleOptionViewItem opt;
+    int gridHint = m_pTableView->style()->styleHint(QStyle::SH_Table_GridLineColor, &opt);
     QColor gridColor = static_cast<QRgb>(gridHint);
     m_LinePen = QPen(gridColor, 0, m_pTableView->gridStyle());
 }
@@ -18,20 +22,6 @@ LogEntryItemDelegate::LogEntryItemDelegate(QTableView* apTableView, Highlighters
 
 void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    /*
-    QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
-
-    QVariant data = index.data(); // pick the data you need here
-    opt.font.setBold(true);
-    opt.backgroundBrush = QBrush(Qt::red);
-
-    painter->setPen(Qt::red);
-    painter->setPen( option.palette.highlightedText().color() );
-
-    QStyledItemDelegate::paint(painter, opt, index);
-  */
-
 /*
     auto options = option;
     initStyleOption(&options, index);
@@ -53,12 +43,23 @@ void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
     painter->restore();
 */
+
     QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
 
+    // some shorthands
+    QVariant data = index.data();
+    const QAbstractItemModel* pModel = index.model();
+    int row = index.row();
 
+    // do we need to render a timestamp?
+    if (data.userType() == QMetaType::QDateTime) {
+        // yes -> override text with formatted timestamp
+        opt.text = data.toDateTime().toString("hh:mm:ss.zzz");
+    }
 
-    //QString str = index.data().toString();
-    QString str = index.model()->index(index.row(), 1).data().toString();
+    // highlight according to text
+    QString str = pModel->index(row, 1).data().toString();
     Highlighter* pHighlighter = m_pHighlighters->Match(str);
     if (pHighlighter) {
         opt.font.setBold(true);
@@ -70,22 +71,23 @@ void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
         }
     }
 
-    //opt.palette.setColor(QPalette::Text, Qt::red);
-    //opt.palette.setBrush(QPalette::Text, Qt::red);
-    //opt.font.setBold(true);
-    //opt.palette.setColor(QPalette::Normal, QPalette::Background, Qt::blue);
-    //opt.palette.setColor(QPalette::Text, Qt::red);
-    //opt.palette.setBrush(QPalette::Background, Qt::blue);
-    //painter->fillRect(option.rect, Qt::yellow);
-    QStyledItemDelegate::paint(painter, opt, index);
+    // draw control explicitly rather than calling base to handle
+    // overwritten text in opt.text
+    //QStyledItemDelegate::paint(painter, opt, index);
+    opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
 
+    // get timestamp associated with this row
+    QDateTime ts = pModel->index(row, 0).data().toDateTime();
+    // get timestamp associated with next row
+    QDateTime nts = pModel->index(row+1, 0).data().toDateTime();
 
-
-    // draw horizontalLine
-    QPen oldPen = painter->pen();
-    painter->setPen(m_LinePen);
-    painter->drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
-    painter->setPen(oldPen);
+    // draw horizontal line to mark time gaps
+    if (ts.isValid() && nts.isValid() && ts.msecsTo(nts) > 500) {
+        QPen oldPen = painter->pen();
+        painter->setPen(m_LinePen);
+        painter->drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
+        painter->setPen(oldPen);
+    }
 }
 
 QSize LogEntryItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
