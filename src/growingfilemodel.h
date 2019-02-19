@@ -14,7 +14,6 @@ public:
     struct Entry {
         QDateTime m_ts;
         QString m_sText;
-        bool m_bAlternate;
     };
 
 public:
@@ -36,7 +35,6 @@ protected:
     QList<Entry> m_Entries;
     QTimer m_Timer;
     qint64 m_uLastPos;
-    bool m_bAlternate;
 };
 
 #endif // GROWINGFILEMODEL_H

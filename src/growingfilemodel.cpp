@@ -14,8 +14,7 @@ GrowingFileModel::GrowingFileModel(QObject *parent, QString filename):
     m_sFilename(filename),
     m_Entries(),
     m_Timer(),
-    m_uLastPos(),
-    m_bAlternate(false)
+    m_uLastPos()
 {
     connect(&m_Timer, SIGNAL(timeout()), this, SLOT(timer()));
     update();
@@ -45,7 +44,6 @@ void GrowingFileModel::clear()
     beginResetModel();
     m_Entries.clear();
     m_uLastPos = 0;
-    m_bAlternate = false;
     endResetModel();
 }
 
@@ -72,12 +70,6 @@ void GrowingFileModel::update()
         Entry e;
         e.m_sText = line;
         e.m_ts = QDateTime::currentDateTime();
-
-        if (!m_Entries.empty() && m_Entries.last().m_ts.msecsTo(e.m_ts) >= 500) {
-            m_bAlternate = !m_bAlternate;
-        }
-
-        e.m_bAlternate = m_bAlternate;
         m_Entries.append(e);
     }
     m_uLastPos = in.pos();
@@ -107,7 +99,7 @@ QVariant GrowingFileModel::data(const QModelIndex &index, int role) const
     switch (role) {
         case Qt::DisplayRole: {
             switch (index.column()) {
-                case 0: return e.m_ts.toString("hh:mm:ss.zzz");
+                case 0: return e.m_ts;
                 case 1: return e.m_sText;
             }
             break;
