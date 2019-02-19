@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pWarningHiLi->SetPattern("warning");
     pWarningHiLi->SetTextColor(QColor("orange"));
     pHighlighters->Add(pWarningHiLi);
-    ui->tableView->setItemDelegate(new LogEntryItemDelegate(this, pHighlighters));
+    ui->tableView->setItemDelegate(new LogEntryItemDelegate(ui->tableView, pHighlighters));
     ui->tableView->setModel(model);
 
     // don't allow to change row heights
@@ -42,8 +42,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::model_rowsInserted(const QModelIndex & parent, int start, int end) {
-    (void)parent;
-    (void)end;
+    Q_UNUSED(parent);
+    Q_UNUSED(start);
+    Q_UNUSED(end);
     // Workaround for age-old bug Qt is too lazy to fix...
     // https://www.qtcentre.org/threads/335-QTreeView-problem-scrolling-to-end
     // But at least we can make use of it and sroll only to the bottom

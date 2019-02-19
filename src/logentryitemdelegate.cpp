@@ -2,11 +2,17 @@
 
 #include <QPainter>
 #include <QTextDocument>
+#include <QTableView>
 
-LogEntryItemDelegate::LogEntryItemDelegate(QObject *parent, Highlighters* apHighlighters):
-    QStyledItemDelegate(parent),
-    m_pHighlighters(apHighlighters)
+LogEntryItemDelegate::LogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters):
+    QStyledItemDelegate(apTableView),
+    m_pTableView(apTableView),
+    m_pHighlighters(apHighlighters),
+    m_LinePen()
 {
+    int gridHint = m_pTableView->style()->styleHint(QStyle::SH_Table_GridLineColor, new QStyleOptionViewItemV4());
+    QColor gridColor = static_cast<QRgb>(gridHint);
+    m_LinePen = QPen(gridColor, 0, m_pTableView->gridStyle());
 }
 
 
@@ -72,6 +78,14 @@ void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     //opt.palette.setBrush(QPalette::Background, Qt::blue);
     //painter->fillRect(option.rect, Qt::yellow);
     QStyledItemDelegate::paint(painter, opt, index);
+
+
+
+    // draw horizontalLine
+    QPen oldPen = painter->pen();
+    painter->setPen(m_LinePen);
+    painter->drawLine(option.rect.bottomLeft(), option.rect.bottomRight());
+    painter->setPen(oldPen);
 }
 
 QSize LogEntryItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

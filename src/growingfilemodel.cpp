@@ -113,7 +113,8 @@ QVariant GrowingFileModel::data(const QModelIndex &index, int role) const
             break;
         }
         case Qt::BackgroundRole: {
-            if (e.m_bAlternate) {
+            //if (e.m_bAlternate) {
+            if (index.column() == 0) {
                 return QPalette().brush(QPalette::AlternateBase);
             }
             break;
