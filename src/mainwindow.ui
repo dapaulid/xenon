@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>768</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,7 +50,7 @@
           </property>
           <property name="font">
            <font>
-            <family>Courier New</family>
+            <family>Monospace</family>
             <pointsize>10</pointsize>
            </font>
           </property>
@@ -125,8 +125,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
-     <height>17</height>
+     <width>768</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
