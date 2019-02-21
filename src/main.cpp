@@ -4,24 +4,18 @@
 #include <QTextStream>
 #include <QDebug>
 
+#include "logfile.h"
+
 int main(int argc, char *argv[])
 {
+    if (argc > 2 && strcmp(argv[1], "-i") == 0) {
+        LogFile lf(argv[2]);
+        return 0;
+    }
+
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
 
     return a.exec();
-/*
-    QFile file("C:\\Users\\dapau\\projects\\log-analyzer\\test.log");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return 1;
-
-    QTextStream in(&file);
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        qDebug() << line;
-    }
-
-    return 0;
-   */
 }
