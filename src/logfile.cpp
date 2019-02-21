@@ -36,6 +36,11 @@ void LogFile::analyze_ascii()
 {
     std::ifstream in(m_sFileName.toStdString());
 
+    if (!in.good()) {
+        qDebug() << "Failed to open " << m_sFileName;
+        return;
+    }
+
     ChunkHeader ch = {};
     ch.offset = in.tellg();
 
@@ -59,6 +64,11 @@ void LogFile::analyze_utf8()
 
     std::wifstream in(m_sFileName.toStdString());
     in.imbue(std::locale(utf8_locale));
+
+    if (!in.good()) {
+        qDebug() << "Failed to open " << m_sFileName;
+        return;
+    }
 
     ChunkHeader ch = {};
     ch.offset = in.tellg();
