@@ -7,7 +7,7 @@
 #include <QTimer>
 #include <QDateTime>
 
-class GrowingFileModel : public QAbstractTableModel
+class CGrowingFileModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
@@ -17,7 +17,7 @@ public:
     };
 
 public:
-    GrowingFileModel(QObject *parent, QString filename);
+    CGrowingFileModel(QObject *parent, QString filename);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

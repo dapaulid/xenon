@@ -9,7 +9,7 @@
 #include <locale>
 #include <codecvt>
 
-LogFile::LogFile(const QString& asFileName):
+CLogFile::CLogFile(const QString& asFileName):
     m_sFileName(asFileName),
     m_uTotalLines(0),
     m_uLinesPerChunk(DEFAULT_LINES_PER_CHUNK),
@@ -18,11 +18,11 @@ LogFile::LogFile(const QString& asFileName):
     analyze();
 }
 
-LogFile::~LogFile()
+CLogFile::~CLogFile()
 {
 }
 
-void LogFile::analyze()
+void CLogFile::analyze()
 {
     //analyze_utf8();
     analyze_ascii();   // fastest, but there may be issues on utf-8 files (false line breaks?)
@@ -32,7 +32,7 @@ void LogFile::analyze()
     qDebug() << "Chunks:" << m_Index.count();
 }
 
-void LogFile::analyze_ascii()
+void CLogFile::analyze_ascii()
 {
     std::ifstream in(m_sFileName.toStdString());
 
@@ -57,7 +57,7 @@ void LogFile::analyze_ascii()
     appendChunkHeader(ch, in.tellg());
 }
 
-void LogFile::analyze_utf8()
+void CLogFile::analyze_utf8()
 {
     std::locale old_locale;
     std::locale utf8_locale(old_locale, new std::codecvt_utf8<wchar_t,0x10ffff, std::consume_header>);
@@ -86,7 +86,7 @@ void LogFile::analyze_utf8()
     appendChunkHeader(ch, in.tellg());
 }
 
-void LogFile::analyze_generic()
+void CLogFile::analyze_generic()
 {
     QFile file(m_sFileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -122,7 +122,7 @@ void LogFile::analyze_generic()
     qDebug() << "Codec:" << in.codec()->name();
 }
 
-void LogFile::appendChunkHeader(ChunkHeader& ch, qint64 offset)
+void CLogFile::appendChunkHeader(ChunkHeader& ch, qint64 offset)
 {
     if (ch.lines == 0) {
         // ignore empty chunks (can happen at file end)

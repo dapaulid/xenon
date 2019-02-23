@@ -10,11 +10,11 @@ const quint32 DEFAULT_LINES_PER_CHUNK = 1000;
 //! be careful when increasing it, some buffers are allocated on the stack
 const quint32 MAX_LINE_LENGTH = 1024;
 
-class LogFile
+class CLogFile
 {
 public:
-    LogFile(const QString& asFileName);
-    virtual ~LogFile();
+    CLogFile(const QString& asFileName);
+    virtual ~CLogFile();
 
 protected:
     virtual void analyze();

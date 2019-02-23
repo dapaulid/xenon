@@ -9,7 +9,7 @@
 #include <QPalette>
 #include <QApplication>
 
-GrowingFileModel::GrowingFileModel(QObject *parent, QString filename):
+CGrowingFileModel::CGrowingFileModel(QObject *parent, QString filename):
     QAbstractTableModel(parent),
     m_sFilename(filename),
     m_Entries(),
@@ -21,7 +21,7 @@ GrowingFileModel::GrowingFileModel(QObject *parent, QString filename):
     m_Timer.start(100);
 }
 
-void GrowingFileModel::timer()
+void CGrowingFileModel::timer()
 {
     /*
      * We use a timer rather than QFileSystemWatcher, because
@@ -39,7 +39,7 @@ void GrowingFileModel::timer()
     }
 }
 
-void GrowingFileModel::clear()
+void CGrowingFileModel::clear()
 {
     beginResetModel();
     m_Entries.clear();
@@ -47,7 +47,7 @@ void GrowingFileModel::clear()
     endResetModel();
 }
 
-void GrowingFileModel::update()
+void CGrowingFileModel::update()
 {
     qDebug() << "UPDATE";
     //this->beginResetModel();
@@ -83,17 +83,17 @@ void GrowingFileModel::update()
     //this->endResetModel();
 }
 
-int GrowingFileModel::rowCount(const QModelIndex & /*parent*/) const
+int CGrowingFileModel::rowCount(const QModelIndex & /*parent*/) const
 {
    return m_Entries.size();
 }
 
-int GrowingFileModel::columnCount(const QModelIndex & /*parent*/) const
+int CGrowingFileModel::columnCount(const QModelIndex & /*parent*/) const
 {
     return 2;
 }
 
-QVariant GrowingFileModel::data(const QModelIndex &index, int role) const
+QVariant CGrowingFileModel::data(const QModelIndex &index, int role) const
 {
     const Entry& e = m_Entries[index.row()];
     switch (role) {
@@ -115,7 +115,7 @@ QVariant GrowingFileModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant GrowingFileModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant CGrowingFileModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal) {
@@ -136,7 +136,7 @@ QVariant GrowingFileModel::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-Qt::ItemFlags GrowingFileModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CGrowingFileModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::ItemIsEnabled;

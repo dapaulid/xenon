@@ -7,12 +7,12 @@
 
 #include "highlighter.h"
 
-class LogEntryItemDelegate : public QStyledItemDelegate
+class CLogEntryItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
     public:
-        explicit LogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters);
+        explicit CLogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters);
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;

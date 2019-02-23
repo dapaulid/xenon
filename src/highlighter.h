@@ -5,10 +5,10 @@
 #include <QColor>
 #include <QMap>
 
-class Highlighter
+class CHighlighter
 {
 public:
-    Highlighter(const QString& aName);
+    CHighlighter(const QString& aName);
 
     const QString& GetName() const {
         return m_Name;
@@ -50,12 +50,12 @@ class Highlighters
 public:
     Highlighters();
 
-    void Add(Highlighter* apHighlighter);
+    void Add(CHighlighter* apHighlighter);
 
-    Highlighter* Match(const QString& str);
+    CHighlighter* Match(const QString& str);
 
 protected:
-    QMap<QString, Highlighter*> m_Entries;
+    QMap<QString, CHighlighter*> m_Entries;
 };
 
 #endif // HIGHLIGHTER_H

@@ -8,40 +8,40 @@
 #include "QDebug"
 #include "QScrollBar"
 
-MainWindow::MainWindow(QWidget *parent) :
+CMainWindow::CMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::CMainWindow)
 {
     ui->setupUi(this);
     ui->tableView_2->hide();
-    QAbstractTableModel* model = new GrowingFileModel(this,
+    QAbstractTableModel* model = new CGrowingFileModel(this,
         QCoreApplication::arguments().at(1));
     QObject::connect(
         model, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
         this, SLOT(model_rowsInserted(const QModelIndex&,int,int)) // NO on_ !!!!
     );
     Highlighters* pHighlighters = new Highlighters;
-    Highlighter* pErrorHiLi = new Highlighter("error");
+    CHighlighter* pErrorHiLi = new CHighlighter("error");
     pErrorHiLi->SetPattern("error");
     pErrorHiLi->SetTextColor(Qt::red);
     pHighlighters->Add(pErrorHiLi);
-    Highlighter* pWarningHiLi = new Highlighter("warning");
+    CHighlighter* pWarningHiLi = new CHighlighter("warning");
     pWarningHiLi->SetPattern("warning");
     pWarningHiLi->SetTextColor(QColor("orange"));
     pHighlighters->Add(pWarningHiLi);
-    ui->tableView->setItemDelegate(new LogEntryItemDelegate(ui->tableView, pHighlighters));
+    ui->tableView->setItemDelegate(new CLogEntryItemDelegate(ui->tableView, pHighlighters));
     ui->tableView->setModel(model);
 
     // don't allow to change row heights
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 
-MainWindow::~MainWindow()
+CMainWindow::~CMainWindow()
 {
     delete ui;
 }
 
-void MainWindow::model_rowsInserted(const QModelIndex & parent, int start, int end) {
+void CMainWindow::model_rowsInserted(const QModelIndex & parent, int start, int end) {
     Q_UNUSED(parent);
     Q_UNUSED(start);
     Q_UNUSED(end);
@@ -55,12 +55,12 @@ void MainWindow::model_rowsInserted(const QModelIndex & parent, int start, int e
     }
 };
 
-void MainWindow::scrollToBottom()
+void CMainWindow::scrollToBottom()
 {
     ui->tableView->scrollToBottom();
 }
 
-void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
+void CMainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
     (void)index;
 }

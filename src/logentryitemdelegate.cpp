@@ -5,7 +5,7 @@
 #include <QTableView>
 #include <QDateTime>
 
-LogEntryItemDelegate::LogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters):
+CLogEntryItemDelegate::CLogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters):
     QStyledItemDelegate(apTableView),
     m_pTableView(apTableView),
     m_pHighlighters(apHighlighters),
@@ -20,7 +20,7 @@ LogEntryItemDelegate::LogEntryItemDelegate(QTableView* apTableView, Highlighters
 }
 
 
-void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void CLogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 /*
     auto options = option;
@@ -60,7 +60,7 @@ void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
     // highlight according to text
     QString str = pModel->index(row, 1).data().toString();
-    Highlighter* pHighlighter = m_pHighlighters->Match(str);
+    CHighlighter* pHighlighter = m_pHighlighters->Match(str);
     if (pHighlighter) {
         opt.font.setBold(true);
         if (pHighlighter->GetTextColor().isValid()) {
@@ -90,7 +90,7 @@ void LogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     }
 }
 
-QSize LogEntryItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize CLogEntryItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QStyledItemDelegate::sizeHint(option, index);
     /*

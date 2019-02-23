@@ -1,6 +1,6 @@
 #include "highlighter.h"
 
-Highlighter::Highlighter(const QString& aName):
+CHighlighter::CHighlighter(const QString& aName):
     m_Name(aName),
     m_RegExp(),
     m_TextColor(),
@@ -14,14 +14,14 @@ Highlighters::Highlighters():
 {
 }
 
-void Highlighters::Add(Highlighter* apHighlighter)
+void Highlighters::Add(CHighlighter* apHighlighter)
 {
     m_Entries.insert(apHighlighter->GetName(), apHighlighter);
 }
 
-Highlighter* Highlighters::Match(const QString& str)
+CHighlighter* Highlighters::Match(const QString& str)
 {
-    foreach (Highlighter* h, m_Entries) {
+    foreach (CHighlighter* h, m_Entries) {
         if (h->Matches(str)) {
             return h;
         }

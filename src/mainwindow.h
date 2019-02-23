@@ -4,16 +4,16 @@
 #include <QMainWindow>
 
 namespace Ui {
-class MainWindow;
+class CMainWindow;
 }
 
-class MainWindow : public QMainWindow
+class CMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit CMainWindow(QWidget *parent = 0);
+    ~CMainWindow();
 
 private slots:
     void model_rowsInserted(const QModelIndex & parent, int start, int end);
@@ -21,7 +21,7 @@ private slots:
     void scrollToBottom();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::CMainWindow *ui;
 };
 
 #endif // MAINWINDOW_H
