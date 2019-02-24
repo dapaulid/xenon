@@ -117,6 +117,11 @@ void CLogFile::analyze_ascii()
         if (ch.lines == m_uLinesPerChunk) {
             appendChunkHeader(ch, in.tellg());
         }
+
+        if (m_pParser->getState() == CLogFileParser::eUndecided) {
+            m_pParser->prepare(line);
+        }
+
     }
 
     in.clear(); // reset error flags for final tellg to work
