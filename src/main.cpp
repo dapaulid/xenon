@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    qSetMessagePattern("%{time yyyy-MM-ddTHH:mm:ss.zzz} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{file}:%{line} - %{message}");
+
     QApplication a(argc, argv);
     CMainWindow w;
     w.show();

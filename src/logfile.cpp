@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QTextCodec>
+#include <QElapsedTimer>
 
 #include <fstream>
 #include <locale>
@@ -43,9 +44,12 @@ SLogFileChunk* CLogFile::accessChunk(size_t index) const
     SLogFileChunk* pChunk = m_Chunks[index];
     if (!pChunk) {
         // no -> load and add it
+        qDebug("cache miss, loading chunk #%lu", index);
+        QElapsedTimer timer;
+        timer.start();
         pChunk = loadChunk(index);
         m_Chunks.insert(index, pChunk);
-        qDebug() << "Cache miss: Chunk #" << index << "loaded";
+        qDebug("chunk #%lu loaded, took %llu ms", index, timer.elapsed());
     }
     return pChunk;
 }
@@ -90,8 +94,8 @@ void CLogFile::analyze()
     analyze_ascii();   // fastest, but there may be issues on utf-8 files (false line breaks?)
     //analyze_generic(); // additionally finds codec, but broken QTextStream::pos()
 
-    qDebug() << "Lines:" << m_uTotalLines;
-    qDebug() << "Chunks:" << m_Index.size();
+    qInfo() << "Lines:" << m_uTotalLines;
+    qInfo() << "Chunks:" << m_Index.size();
 }
 
 void CLogFile::analyze_ascii()
