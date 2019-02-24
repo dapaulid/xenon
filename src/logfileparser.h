@@ -5,6 +5,8 @@
 #include <QVariant>
 #include <QVector>
 
+#include "timestampparser.h"
+
 struct SLogFileEntry
 {
     QString line;
@@ -22,6 +24,9 @@ public:
 
     virtual size_t getColumnCount() const;
     virtual QString getColumnName(size_t index) const;
+
+protected:
+    CTimestampParser m_TimestampParser;
 };
 
 #endif // LOGFILEPARSER_H

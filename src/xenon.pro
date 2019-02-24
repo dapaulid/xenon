@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     highlighter.cpp \
     logfile.cpp \
     logfileparser.cpp \
-    logfilemodel.cpp
+    logfilemodel.cpp \
+    timestampparser.cpp
 
 HEADERS  += mainwindow.h \
     growingfilemodel.h \
@@ -27,6 +28,7 @@ HEADERS  += mainwindow.h \
     highlighter.h \
     logfile.h \
     logfileparser.h \
-    logfilemodel.h
+    logfilemodel.h \
+    timestampparser.h
 
 FORMS    += mainwindow.ui

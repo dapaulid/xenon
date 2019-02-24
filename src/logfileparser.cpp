@@ -2,7 +2,8 @@
 
 #include <QDateTime>
 
-CLogFileParser::CLogFileParser()
+CLogFileParser::CLogFileParser():
+    m_TimestampParser()
 {
 }
 
@@ -16,7 +17,7 @@ void CLogFileParser::parseEntry(SLogFileEntry& entry)
     entry.columns.resize(splitted.size());
     for (auto i = 0; i < splitted.size(); i++) {
         const QString& s = splitted[i];
-        QDateTime ts = QDateTime::fromString(s, Qt::ISODateWithMs);
+        QDateTime ts = m_TimestampParser.parse(s);
         if (ts.isValid()) {
             // as timestamp
             entry.columns[i] = ts;
