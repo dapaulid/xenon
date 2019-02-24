@@ -13,13 +13,75 @@ CLogFile::CLogFile(const QString& asFileName):
     m_sFileName(asFileName),
     m_uTotalLines(0),
     m_uLinesPerChunk(DEFAULT_LINES_PER_CHUNK),
-    m_Index()
+    m_Index(),
+    m_Chunks(MAX_LOADED_CHUNKS_PER_FILE),
+    m_pParser(new CLogFileParser())
 {
     analyze();
 }
 
 CLogFile::~CLogFile()
 {
+}
+
+SLogFileEntry* CLogFile::getEntry(size_t index) const
+{
+    // get chunk index from entry index
+    size_t ci = index / m_uLinesPerChunk;
+    size_t ei = index % m_uLinesPerChunk;
+
+    // get chunk
+    SLogFileChunk* pChunk = accessChunk(ci);
+
+    // get entry
+    return &pChunk->entries[ei];
+}
+
+SLogFileChunk* CLogFile::accessChunk(size_t index) const
+{
+    // chunk already cached?
+    SLogFileChunk* pChunk = m_Chunks[index];
+    if (!pChunk) {
+        // no -> load and add it
+        pChunk = loadChunk(index);
+        m_Chunks.insert(index, pChunk);
+        qDebug() << "Cache miss: Chunk #" << index << "loaded";
+    }
+    return pChunk;
+}
+
+SLogFileChunk* CLogFile::loadChunk(size_t index) const
+{
+    // get chunk header
+    const SLogFileChunkHeader& ch = m_Index[index];
+
+    // open file
+    QFile file(m_sFileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "fuck";
+        return nullptr;
+    }
+
+    // start reading at line of chunk
+    QTextStream in(&file);
+    if (!in.seek(ch.offset)) {
+        qDebug() << "Failed to seek to " << ch.offset;
+        return nullptr;
+    }
+
+    // allocate new chunk
+    SLogFileChunk* pChunk = new SLogFileChunk;
+
+    // read line by line
+    for (size_t i = 0; i < ch.lines; i++) {
+        SLogFileEntry e = {};
+        e.line = in.readLine();
+        m_pParser->parseEntry(e);
+        pChunk->entries.push_back(e);
+    }
+
+    // done
+    return pChunk;
 }
 
 void CLogFile::analyze()
@@ -29,7 +91,7 @@ void CLogFile::analyze()
     //analyze_generic(); // additionally finds codec, but broken QTextStream::pos()
 
     qDebug() << "Lines:" << m_uTotalLines;
-    qDebug() << "Chunks:" << m_Index.count();
+    qDebug() << "Chunks:" << m_Index.size();
 }
 
 void CLogFile::analyze_ascii()
@@ -41,7 +103,7 @@ void CLogFile::analyze_ascii()
         return;
     }
 
-    ChunkHeader ch = {};
+    SLogFileChunkHeader ch = {};
     ch.offset = in.tellg();
 
     char line [MAX_LINE_LENGTH];
@@ -70,7 +132,7 @@ void CLogFile::analyze_utf8()
         return;
     }
 
-    ChunkHeader ch = {};
+    SLogFileChunkHeader ch = {};
     ch.offset = in.tellg();
 
     wchar_t line [MAX_LINE_LENGTH];
@@ -102,7 +164,7 @@ void CLogFile::analyze_generic()
      * on my i7 8th gen notebook with SSD. Compared to that,
      * wc -l takes 200 ms, so there's room for optimization.
      */
-    ChunkHeader ch = {};
+    SLogFileChunkHeader ch = {};
     ch.offset = in.pos();
 
     while (in.readLineInto(nullptr)) {
@@ -122,7 +184,7 @@ void CLogFile::analyze_generic()
     qDebug() << "Codec:" << in.codec()->name();
 }
 
-void CLogFile::appendChunkHeader(ChunkHeader& ch, qint64 offset)
+void CLogFile::appendChunkHeader(SLogFileChunkHeader& ch, offset_t offset)
 {
     if (ch.lines == 0) {
         // ignore empty chunks (can happen at file end)
@@ -130,8 +192,18 @@ void CLogFile::appendChunkHeader(ChunkHeader& ch, qint64 offset)
     }
     ch.bytes = static_cast<quint32>(offset - ch.offset);
     //qDebug() << m_Index.size() << ch.offset << ch.bytes << ch.lines;
-    m_Index.append(ch);
+    m_Index.push_back(ch);
     ch.offset = offset;
     ch.bytes = 0;
     ch.lines = 0;
+}
+
+size_t CLogFile::getColumnCount() const
+{
+    return m_pParser->getColumnCount();
+}
+
+QString CLogFile::getColumnName(size_t index) const
+{
+    return m_pParser->getColumnName(index);
 }

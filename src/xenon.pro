@@ -17,12 +17,16 @@ SOURCES += main.cpp\
     growingfilemodel.cpp \
     logentryitemdelegate.cpp \
     highlighter.cpp \
-    logfile.cpp
+    logfile.cpp \
+    logfileparser.cpp \
+    logfilemodel.cpp
 
 HEADERS  += mainwindow.h \
     growingfilemodel.h \
     logentryitemdelegate.h \
     highlighter.h \
-    logfile.h
+    logfile.h \
+    logfileparser.h \
+    logfilemodel.h
 
 FORMS    += mainwindow.ui

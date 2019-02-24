@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "growingfilemodel.h"
+#include "logfilemodel.h"
 #include "logentryitemdelegate.h"
 #include "highlighter.h"
 
@@ -14,7 +15,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->tableView_2->hide();
-    QAbstractTableModel* model = new CGrowingFileModel(this,
+    QAbstractTableModel* model = new CLogFileModel/*CGrowingFileModel*/(this,
         QCoreApplication::arguments().at(1));
     QObject::connect(
         model, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
