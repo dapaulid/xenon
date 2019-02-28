@@ -11,6 +11,8 @@
 
 const size_t DEFAULT_LINES_PER_CHUNK = 1000;
 
+const size_t NUM_LINES_TO_ANALYZE = 16;
+
 //! maximum line length in characters supported in log files
 //! be careful when increasing it, some buffers are allocated on the stack
 const size_t MAX_LINE_LENGTH = 1024;

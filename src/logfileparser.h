@@ -23,24 +23,14 @@ enum ELogFileColumnType {
 class CLogFileParser
 {
 public:
-    enum EState {
-        eUndecided,
-        eReady,
-        eIncapable
-    };
-
     CLogFileParser();
     virtual ~CLogFileParser();
 
-    virtual EState prepare(const QString& str);
+    virtual void prepare(const std::vector<QString>& lines);
     virtual void parseEntry(SLogFileEntry& entry);
 
     virtual size_t getColumnCount() const;
     virtual QString getColumnName(size_t index) const;
-
-    EState getState() const {
-        return m_eState;
-    }
 
 protected:
     struct SColumnInfo {
@@ -49,7 +39,6 @@ protected:
     };
 
 protected:
-    EState m_eState;
     std::vector<SColumnInfo> m_Columns;
     CTimestampParser m_TimestampParser;
 };

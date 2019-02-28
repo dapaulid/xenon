@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     logfile.cpp \
     logfileparser.cpp \
     logfilemodel.cpp \
-    timestampparser.cpp
+    timestampparser.cpp \
+    histogram.cpp
 
 HEADERS  += mainwindow.h \
     growingfilemodel.h \
@@ -29,6 +30,7 @@ HEADERS  += mainwindow.h \
     logfile.h \
     logfileparser.h \
     logfilemodel.h \
-    timestampparser.h
+    timestampparser.h \
+    histogram.h
 
 FORMS    += mainwindow.ui

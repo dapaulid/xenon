@@ -111,18 +111,29 @@ void CLogFile::analyze_ascii()
     SLogFileChunkHeader ch = {};
     ch.offset = in.tellg();
 
+    std::vector<QString> firstLines;
+    firstLines.reserve(NUM_LINES_TO_ANALYZE);
+
     char line [MAX_LINE_LENGTH];
     while (in.getline(line, sizeof(line))) {
-        m_uTotalLines++;
+
         ch.lines++;
         if (ch.lines == m_uLinesPerChunk) {
             appendChunkHeader(ch, in.tellg());
         }
 
-        if (m_pParser->getState() == CLogFileParser::eUndecided) {
-            m_pParser->prepare(line);
+        if (m_uTotalLines < NUM_LINES_TO_ANALYZE) {
+            firstLines.push_back(line);
+        } else if (m_uTotalLines == NUM_LINES_TO_ANALYZE) {
+            m_pParser->prepare(firstLines);
         }
 
+        m_uTotalLines++;
+    }
+
+    if (m_uTotalLines < NUM_LINES_TO_ANALYZE) {
+        // make the best from what we've got
+        m_pParser->prepare(firstLines);
     }
 
     in.clear(); // reset error flags for final tellg to work
