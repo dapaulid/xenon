@@ -25,6 +25,28 @@ CLogFile::~CLogFile()
 {
 }
 
+QString CLogFile::getLine(size_t index) const
+{
+    SLogFileEntry* pEntry = getEntry(index);
+    return pEntry ? pEntry->line : QString();
+}
+
+QVariant CLogFile::getItem(size_t index, size_t column) const
+{
+    SLogFileEntry* pEntry = getEntry(index);
+    if (pEntry) {
+        if (pEntry->columns.empty()) {
+            pEntry->columns.resize(m_pParser->getColumnCount());
+        }
+        if (pEntry->columns[column].isNull()) {
+            pEntry->columns[column] = m_pParser->parseLine(pEntry->line, column);
+        }
+        return pEntry->columns[column];
+    } else {
+        return QVariant();
+    }
+}
+
 SLogFileEntry* CLogFile::getEntry(size_t index) const
 {
     // get chunk index from entry index
@@ -81,7 +103,6 @@ SLogFileChunk* CLogFile::loadChunk(size_t index) const
     for (size_t i = 0; i < ch.lines; i++) {
         SLogFileEntry e = {};
         e.line = in.readLine();
-        m_pParser->parseEntry(e);
         pChunk->entries.push_back(e);
     }
 

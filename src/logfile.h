@@ -21,6 +21,12 @@ const size_t MAX_LOADED_CHUNKS_PER_FILE = 1000;
 
 typedef std::streamoff offset_t;
 
+struct SLogFileEntry
+{
+    QString line;
+    std::vector<QVariant> columns; // use QVector instead of std::vector, as we may make use of copy-on-write
+};
+
 struct SLogFileChunk
 {
     std::vector<SLogFileEntry> entries;
@@ -40,7 +46,8 @@ public:
     CLogFile(const QString& asFileName);
     virtual ~CLogFile();
 
-    SLogFileEntry* getEntry(size_t index) const;
+    QString getLine(size_t index) const;
+    QVariant getItem(size_t index, size_t column) const;
 
     size_t getEntryCount() const {
         return m_uTotalLines;
@@ -57,6 +64,8 @@ protected:
 
     virtual SLogFileChunk* accessChunk(size_t index) const;
     virtual SLogFileChunk* loadChunk(size_t index) const;
+
+    virtual SLogFileEntry* getEntry(size_t index) const;
 
 protected:
     void appendChunkHeader(SLogFileChunkHeader& ch, offset_t offset);

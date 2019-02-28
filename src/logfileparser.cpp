@@ -109,19 +109,15 @@ void CLogFileParser::prepare(const std::vector<QString>& lines)
 
 }
 
-void CLogFileParser::parseEntry(SLogFileEntry& entry)
+QVariant CLogFileParser::parseLine(const QString& line, size_t column)
 {
-    entry.columns.resize(m_Columns.size());
-    for (size_t i = 0; i < m_Columns.size(); i++) {
-        QString s = getColumn(entry.line, i, m_Columns.size());
-        switch (m_Columns[i].type) {
-        case eTimestamp:
-            entry.columns[i] = m_TimestampParser.parse(s);
-            break;
-        default:
-            // as string
-            entry.columns[i] = s;
-        }
+    QString item = getColumn(line, column, m_Columns.size());
+    switch (m_Columns[column].type) {
+    case eTimestamp:
+        return m_TimestampParser.parse(item);
+    default:
+        // as string
+        return item;
     }
 }
 

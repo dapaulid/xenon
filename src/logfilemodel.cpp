@@ -28,15 +28,9 @@ int CLogFileModel::columnCount(const QModelIndex & /*parent*/) const
 
 QVariant CLogFileModel::data(const QModelIndex &index, int role) const
 {
-    // TODO fix const cast
-    const SLogFileEntry* pEntry = m_LogFile.getEntry(index.row());
-    if (!pEntry) {
-        return QVariant();
-    }
-
     switch (role) {
         case Qt::DisplayRole: {
-            return pEntry->columns[index.column()];
+            return m_LogFile.getItem(index.row(), index.column());
         }
         case Qt::BackgroundRole: {
             //if (e.m_bAlternate) {
