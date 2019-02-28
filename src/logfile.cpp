@@ -103,7 +103,7 @@ SLogFileChunk* CLogFile::loadChunk(size_t index) const
     pChunk->entries.reserve(m_uLinesPerChunk);
     for (size_t i = 0; i < ch.lines; i++) {
         SLogFileEntry e = {};
-        e.line = in.readLine();
+        in.readLineInto(&e.line);
         pChunk->entries.push_back(e);
     }
 
