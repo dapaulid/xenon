@@ -4,7 +4,6 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QTextCodec>
-#include <QElapsedTimer>
 
 #include <fstream>
 #include <locale>
@@ -16,7 +15,8 @@ CLogFile::CLogFile(const QString& asFileName):
     m_uLinesPerChunk(DEFAULT_LINES_PER_CHUNK),
     m_Index(),
     m_Chunks(MAX_LOADED_CHUNKS_PER_FILE),
-    m_pParser(new CLogFileParser())
+    m_pParser(new CLogFileParser()),
+    m_CacheStat()
 {
     analyze();
 }
@@ -57,7 +57,7 @@ SLogFileEntry* CLogFile::getEntry(size_t index) const
     SLogFileChunk* pChunk = accessChunk(ci);
 
     // get entry
-    return &pChunk->entries[ei];
+    return pChunk ? &pChunk->entries[ei] : nullptr;
 }
 
 SLogFileChunk* CLogFile::accessChunk(size_t index) const
@@ -67,11 +67,12 @@ SLogFileChunk* CLogFile::accessChunk(size_t index) const
     if (!pChunk) {
         // no -> load and add it
         qDebug("cache miss, loading chunk #%lu", index);
-        QElapsedTimer timer;
-        timer.start();
+        m_CacheStat.start();
         pChunk = loadChunk(index);
         m_Chunks.insert(index, pChunk);
-        qDebug("chunk #%lu loaded, took %llu ms", index, timer.elapsed());
+        double elapsed = m_CacheStat.stop();
+        qDebug("chunk #%lu loaded, took %0.3f ms (MIN=%0.3f|MEAN=%0.3f|MAX=%0.3f)",
+            index, elapsed, m_CacheStat.min(), m_CacheStat.mean(), m_CacheStat.max());
     }
     return pChunk;
 }

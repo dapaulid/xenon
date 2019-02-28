@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "logfileparser.h"
+#include "timingstat.h"
 
 const size_t DEFAULT_LINES_PER_CHUNK = 1000;
 
@@ -77,6 +78,7 @@ protected:
     std::vector<SLogFileChunkHeader> m_Index;
     mutable QCache<size_t, SLogFileChunk> m_Chunks;
     CLogFileParser* m_pParser;
+    mutable CTimingStat m_CacheStat;
 };
 
 
