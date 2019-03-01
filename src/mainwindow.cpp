@@ -1,3 +1,5 @@
+#include <QFileDialog>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -20,11 +22,25 @@ CMainWindow::~CMainWindow()
 
 void CMainWindow::open(const QString& filename)
 {
-    CLogFileWidget* logFileWidget = new CLogFileWidget(ui->tabWidget, filename);
-    ui->tabWidget->addTab(logFileWidget, logFileWidget->getDisplayName());
+    // create new log file widget
+    CLogFileWidget* logFileWidget = new CLogFileWidget(this, filename);
+    // create new tab for it
+    int tabIndex = ui->tabWidget->addTab(logFileWidget, logFileWidget->getDisplayName());
+    // bring it to front
+    ui->tabWidget->setCurrentIndex(tabIndex);
 }
 
 void CMainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     ui->tabWidget->removeTab(index);
+}
+
+void CMainWindow::on_action_Open_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Open Log File"), QString(), tr("Log files (*.log *.txt);;All files (*)"));
+
+    if (!fileName.isEmpty()) {
+        open(fileName);
+    }
 }

@@ -33,7 +33,7 @@ CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
     pHighlighters->Add(pWarningHiLi);
 
     // set tableview proportions
-    ui->splitter->setStretchFactor(0, 2);
+    ui->splitter->setStretchFactor(0, 3);
     ui->splitter->setStretchFactor(1, 1);
 
     // init master tableview
