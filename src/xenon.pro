@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    growingfilemodel.cpp \
     logentryitemdelegate.cpp \
     highlighter.cpp \
     logfile.cpp \
@@ -25,7 +24,6 @@ SOURCES += main.cpp\
     timingstat.cpp
 
 HEADERS  += mainwindow.h \
-    growingfilemodel.h \
     logentryitemdelegate.h \
     highlighter.h \
     logfile.h \
