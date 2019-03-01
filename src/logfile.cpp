@@ -133,9 +133,9 @@ void CLogFile::load()
     qInfo() << "Chunks:" << m_Index.size();
 
     size_t newLineCount = m_uTotalLines;
-    if (newLineCount > oldLineCount) {
-        emit grown(oldLineCount, newLineCount);
-    }
+
+    // notify observers
+    emit changed(oldLineCount, newLineCount);
 }
 
 void CLogFile::clear()

@@ -14,13 +14,32 @@ CLogFileModel::CLogFileModel(QObject *parent, QString filename):
     m_sFilename(filename),
     m_LogFile(filename)
 {
-    connect(&m_LogFile, SIGNAL(grown(size_t, size_t)), this, SLOT(logFileGrown(size_t, size_t)));
+    connect(&m_LogFile, SIGNAL(changed(size_t, size_t)), this, SLOT(logFileChanged(size_t, size_t)));
 }
 
-void CLogFileModel::logFileGrown(size_t oldLineCount, size_t newLineCount)
+void CLogFileModel::logFileChanged(size_t oldLineCount, size_t newLineCount)
 {
-    beginInsertRows(QModelIndex(), static_cast<int>(oldLineCount), static_cast<int>(newLineCount)-1);
-    endInsertRows();
+    // update model
+    /*
+     * TODO is there something simpler?
+     * begin/endResetModel() does reset the current selection.
+     */
+    int oldRows = static_cast<int>(oldLineCount);
+    int newRows = static_cast<int>(newLineCount);
+    if (newLineCount > oldLineCount) {
+        // logfile grew
+        emit dataChanged(index(0, 0), index(oldRows-1, columnCount()-1));
+        beginInsertRows(QModelIndex(), oldRows, newRows-1);
+        endInsertRows();
+    } else if (newLineCount < oldLineCount) {
+        // logfile shrunk
+        emit dataChanged(index(0, 0), index(newRows-1, columnCount()-1));
+        beginRemoveRows(QModelIndex(), newRows, oldRows-1);
+        endRemoveRows();
+    } else {
+        // lines stayed the same
+        emit dataChanged(index(0, 0), index(newRows-1, columnCount()-1));
+    }
 }
 
 int CLogFileModel::rowCount(const QModelIndex & /*parent*/) const

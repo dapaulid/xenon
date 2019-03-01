@@ -62,7 +62,7 @@ public:
     QString getColumnName(size_t index) const;
 
 signals:
-    void grown(size_t oldLineCount, size_t newLineCount);
+    void changed(size_t oldLineCount, size_t newLineCount);
 
 protected:
     void load();
