@@ -224,10 +224,16 @@ bool CLogFile::updateLastModified()
 void CLogFile::timer()
 {
     /*
-     * NOTE: with our design of lazily loading the file by chunks,
+     * NOTE #1: We use a timer rather than QFileSystemWatcher, because
+     * when I checked last (Qt 5.7 under Windows) it was very
+     * buggy and catched only modifications after close()ing a file,
+     * and not even all of them...
+     */
+    /*
+     * NOTE #2: With our design of lazily loading the file by chunks,
      * it is easier but still efficient to just discard everything
      * and reload the whole file instead of determining what
-     * changed exactly.
+     * exactly changed.
      */
     if (updateLastModified()) {
         load();
