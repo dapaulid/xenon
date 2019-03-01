@@ -4,25 +4,48 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QMessageBox>
+#include <QSpacerItem>
+#include <QGridLayout>
 
 #include "logfile.h"
 
 void displayLogMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    Q_UNUSED(context);
+    QString what;
+    QMessageBox::Icon icon;
+
+    // determine dialog type
     switch (type) {
     case QtWarningMsg:
-        QMessageBox::warning(nullptr, "Warning", msg);
+        what = "warning";
+        icon = QMessageBox::Warning;
         break;
     case QtCriticalMsg:
-        QMessageBox::critical(nullptr, "Critical Error", msg);
+        what = "critical error";
+        icon = QMessageBox::Critical;
         break;
     case QtFatalMsg:
-        QMessageBox::critical(nullptr, "Fatal Error", msg);
+        what = "fatal error";
+        icon = QMessageBox::Critical;
         break;
     default:
-        ;// do nothing
+        // do not display
+        return;
     }
+
+    // setup dialog
+    QMessageBox dialog;
+
+    dialog.setIcon(icon);
+    dialog.setText(QString("A %1 occurred while executing %2:\n\n%3")
+        .arg(what).arg(QCoreApplication::applicationName()).arg(msg));
+    dialog.setDetailedText(QString("category:\t %1\nlocation:\t %2:%3\nfunction:\t %4")
+        .arg(context.category)
+        .arg(context.file).arg(context.line)
+        .arg(context.function));
+
+    // show it
+    dialog.exec();
 }
 
 int main(int argc, char *argv[])
