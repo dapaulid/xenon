@@ -21,6 +21,10 @@ CMainWindow::CMainWindow(QWidget *parent) :
         model, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
         this, SLOT(model_rowsInserted(const QModelIndex&,int,int)) // NO on_ !!!!
     );
+    QObject::connect(
+        model, SIGNAL(modelReset()),
+        this, SLOT(model_modelReset()) // NO on_ !!!!
+    );
     Highlighters* pHighlighters = new Highlighters;
     CHighlighter* pErrorHiLi = new CHighlighter("error");
     pErrorHiLi->SetPattern("error");
@@ -55,6 +59,18 @@ void CMainWindow::model_rowsInserted(const QModelIndex & parent, int start, int 
         QTimer::singleShot(0, this, SLOT(scrollToBottom()));
     }
 };
+
+void CMainWindow::model_modelReset()
+{
+    // Workaround for age-old bug Qt is too lazy to fix...
+    // https://www.qtcentre.org/threads/335-QTreeView-problem-scrolling-to-end
+    // But at least we can make use of it and sroll only to the bottom
+    // if it was previously at the bottom as well
+    QScrollBar* scrollBar = ui->tableView->verticalScrollBar();
+    if (scrollBar->value() == scrollBar->maximum()) {
+        QTimer::singleShot(0, this, SLOT(scrollToBottom()));
+    }
+}
 
 void CMainWindow::scrollToBottom()
 {

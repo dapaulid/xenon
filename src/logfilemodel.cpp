@@ -14,6 +14,14 @@ CLogFileModel::CLogFileModel(QObject *parent, QString filename):
     m_sFilename(filename),
     m_LogFile(filename)
 {
+    connect(&m_LogFile, SIGNAL(changed()), this, SLOT(logfileChanged()));
+}
+
+void CLogFileModel::logfileChanged()
+{
+    qDebug() << "logfileChanged";
+    beginResetModel();
+    endResetModel();
 }
 
 int CLogFileModel::rowCount(const QModelIndex & /*parent*/) const

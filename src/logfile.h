@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVariant>
 #include <QCache>
+#include <QTimer>
 
 #include <vector>
 
@@ -19,6 +20,8 @@ const size_t NUM_LINES_TO_ANALYZE = 16;
 const size_t MAX_LINE_LENGTH = 1024;
 
 const size_t MAX_LOADED_CHUNKS_PER_FILE = 1000;
+
+const unsigned long DEFAULT_FILE_POLL_INTERVAL_MS = 100;
 
 typedef std::streamoff offset_t;
 
@@ -40,11 +43,12 @@ struct SLogFileChunkHeader
     size_t lines;
 };
 
-class CLogFile
+class CLogFile: public QObject
 {
+Q_OBJECT
 
 public:
-    CLogFile(const QString& asFileName);
+    CLogFile(const QString& asFileName, QObject* parent = nullptr);
     virtual ~CLogFile();
 
     QString getLine(size_t index) const;
@@ -57,16 +61,25 @@ public:
     size_t getColumnCount() const;
     QString getColumnName(size_t index) const;
 
+signals:
+    void changed();
+
 protected:
-    virtual void analyze();
-    virtual void analyze_generic();
-    virtual void analyze_ascii();
-    virtual void analyze_utf8();
+    void load();
+    void analyze_generic();
+    void analyze_ascii();
+    void analyze_utf8();
+    void clear();
+
+protected slots:
+    virtual void timer();
 
     virtual SLogFileChunk* accessChunk(size_t index) const;
     virtual SLogFileChunk* loadChunk(size_t index) const;
 
     virtual SLogFileEntry* getEntry(size_t index) const;
+
+    virtual bool updateLastModified();
 
 protected:
     void appendChunkHeader(SLogFileChunkHeader& ch, offset_t offset);
@@ -79,6 +92,8 @@ protected:
     mutable QCache<size_t, SLogFileChunk> m_Chunks;
     CLogFileParser* m_pParser;
     mutable CTimingStat m_CacheStat;
+    QTimer m_Timer;
+    QDateTime m_LastModified;
 };
 
 

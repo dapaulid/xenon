@@ -1,6 +1,7 @@
 #include "logfile.h"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QDebug>
 #include <QTextCodec>
@@ -9,16 +10,21 @@
 #include <locale>
 #include <codecvt>
 
-CLogFile::CLogFile(const QString& asFileName):
+CLogFile::CLogFile(const QString& asFileName, QObject* parent):
+    QObject(parent),
     m_sFileName(asFileName),
     m_uTotalLines(0),
     m_uLinesPerChunk(DEFAULT_LINES_PER_CHUNK),
     m_Index(),
     m_Chunks(MAX_LOADED_CHUNKS_PER_FILE),
     m_pParser(new CLogFileParser()),
-    m_CacheStat()
+    m_CacheStat(),
+    m_Timer(),
+    m_LastModified()
 {
-    analyze();
+    connect(&m_Timer, SIGNAL(timeout()), this, SLOT(timer()));
+    load();
+    m_Timer.start(DEFAULT_FILE_POLL_INTERVAL_MS);
 }
 
 CLogFile::~CLogFile()
@@ -111,15 +117,29 @@ SLogFileChunk* CLogFile::loadChunk(size_t index) const
     return pChunk;
 }
 
-void CLogFile::analyze()
+void CLogFile::load()
 {
+    clear();
+
     //analyze_utf8();
     analyze_ascii();   // fastest, but there may be issues on utf-8 files (false line breaks?)
     //analyze_generic(); // additionally finds codec, but broken QTextStream::pos()
 
+    updateLastModified();
+
+    emit changed();
+
     qInfo() << "Lines:" << m_uTotalLines;
     qInfo() << "Chunks:" << m_Index.size();
 }
+
+void CLogFile::clear()
+{
+    m_Index.clear();
+    m_Chunks.clear();
+    m_uTotalLines = 0;
+}
+
 
 void CLogFile::analyze_ascii()
 {
@@ -249,4 +269,24 @@ size_t CLogFile::getColumnCount() const
 QString CLogFile::getColumnName(size_t index) const
 {
     return m_pParser->getColumnName(index);
+}
+
+bool CLogFile::updateLastModified()
+{
+    QFileInfo fi(m_sFileName);
+
+    QDateTime lastModified = fi.lastModified();
+    if (m_LastModified != lastModified) {
+        m_LastModified = lastModified;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void CLogFile::timer()
+{
+    if (updateLastModified()) {
+        load();
+    }
 }
