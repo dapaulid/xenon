@@ -1,4 +1,5 @@
 #include <QScrollBar>
+#include <QDebug>
 
 #include "logfilewidget.h"
 #include "ui_logfilewidget.h"
@@ -20,6 +21,10 @@ CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
         model, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
         this, SLOT(model_rowsInserted(const QModelIndex&,int,int)) // NO on_ !!!!
     );
+
+    // connect filter controls
+    connect(ui->cbxFilter, SIGNAL(activated(int)), this, SLOT(applyFilter()));
+    connect(ui->btnFilter, SIGNAL(clicked()), this, SLOT(applyFilter()));
 
     // init highlighters
     Highlighters* pHighlighters = new Highlighters;
@@ -49,6 +54,11 @@ CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
 CLogFileWidget::~CLogFileWidget()
 {
     delete ui;
+}
+
+void CLogFileWidget::applyFilter()
+{
+    ui->lblCount->setText(QString("%1 of %2 lines").arg(0).arg(m_LogFile.getEntryCount()));
 }
 
 void CLogFileWidget::model_rowsInserted(const QModelIndex & parent, int start, int end) {

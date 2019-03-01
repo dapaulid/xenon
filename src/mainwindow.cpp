@@ -28,6 +28,8 @@ void CMainWindow::open(const QString& filename)
     int tabIndex = ui->tabWidget->addTab(logFileWidget, logFileWidget->getDisplayName());
     // bring it to front
     ui->tabWidget->setCurrentIndex(tabIndex);
+
+    ui->statusBar->showMessage(QString("Opened %1").arg(filename), 5000);
 }
 
 void CMainWindow::on_tabWidget_tabCloseRequested(int index)

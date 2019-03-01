@@ -25,6 +25,8 @@ private slots:
     void model_rowsInserted(const QModelIndex & parent, int start, int end);
     void scrollToBottom();
 
+    void applyFilter();
+
 private:
     Ui::CLogFileWidget *ui;
     CLogFile m_LogFile;

@@ -48,6 +48,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+      <widget class="QLabel" name="lblFilter">
+       <property name="text">
+        <string>Filter:</string>
+       </property>
+       <property name="buddy">
+        <cstring>cbxFilter</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QComboBox" name="cbxFilter">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -63,7 +73,14 @@
      <item>
       <widget class="QPushButton" name="btnFilter">
        <property name="text">
-        <string>PushButton</string>
+        <string>Filter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblCount">
+       <property name="text">
+        <string>TextLabel</string>
        </property>
       </widget>
      </item>
