@@ -1,5 +1,6 @@
 #include <QRegularExpression>
 #include <QDateTime>
+#include <QDebug>
 
 #include "logfileparser.h"
 #include "histogram.h"
@@ -21,7 +22,7 @@ size_t getColumnIndex(const QString& str, int index)
         index = str.length();
     }
 
-    size_t column = static_cast<size_t>(-1);
+    size_t column = 0;
     int i = 0;
     while (i < index) {
         // consume leading whitespace
@@ -33,7 +34,9 @@ size_t getColumnIndex(const QString& str, int index)
         while (i < index && !str[i].isSpace()) {
             i++;
         }
-        column++;
+        if (i < index) {
+            column++;
+        }
     }
     return column;
 }
@@ -70,13 +73,14 @@ QString getColumn(const QString& str, size_t column, size_t columnCount)
 void CLogFileParser::prepare(const std::vector<QString>& lines)
 {
     CHistogram<size_t> hist;
-    QRegularExpression re("\\s+(\\w{2,})\\s+\\w{2,}");
+    QRegularExpression re("\\b(\\p{L}{2,})\\s+\\w{2,}");
 
     for (size_t i = 0; i < lines.size(); i++) {
         const QString& line = lines[i];
         size_t uColumnCount = 0;
         QRegularExpressionMatch match = re.match(line);
         if (match.hasMatch()) {
+            qDebug() <<  match.captured(1);
             uColumnCount = getColumnIndex(line, match.capturedStart(1))+1;
             qDebug("Line %lu: Columns = %lu", i+1, uColumnCount);
         } else {
