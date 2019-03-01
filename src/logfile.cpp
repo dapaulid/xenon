@@ -91,14 +91,14 @@ SLogFileChunk* CLogFile::loadChunk(size_t index) const
     // open file
     QFile file(m_sFileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "fuck";
+        qCritical() << "Failed to open file" << m_sFileName << "for reading chunk";
         return nullptr;
     }
 
     // start reading at line of chunk
     QTextStream in(&file);
     if (!in.seek(ch.offset)) {
-        qDebug() << "Failed to seek to " << ch.offset;
+        qDebug() << "Failed to seek to" << ch.offset << "for reading chunk";
         return nullptr;
     }
 
@@ -121,14 +121,54 @@ void CLogFile::load()
 {
     size_t oldLineCount = m_uTotalLines;
 
+    // discard old stuff
     clear();
 
-    //analyze_utf8();
-    analyze_ascii();   // fastest, but there may be issues on utf-8 files (false line breaks?)
-    //analyze_generic(); // additionally finds codec, but broken QTextStream::pos()
+    // open file
+    std::ifstream in(m_sFileName.toStdString());
+    if (!in.good()) {
+        qCritical() << "Failed to open" << m_sFileName;
+        return;
+    }
 
+    SLogFileChunkHeader ch = {};
+    ch.offset = in.tellg();
+
+    std::vector<QString> firstLines;
+    firstLines.reserve(NUM_LINES_TO_ANALYZE);
+
+    // read line by line
+    char line [MAX_LINE_LENGTH];
+    while (in.getline(line, sizeof(line))) {
+
+        // index into chunks
+        if (ch.lines++ == m_uLinesPerChunk) {
+            appendChunkHeader(ch, in.tellg());
+        }
+
+        // train our parser
+        if (m_uTotalLines < NUM_LINES_TO_ANALYZE) {
+            firstLines.push_back(line);
+        } else if (m_uTotalLines == NUM_LINES_TO_ANALYZE) {
+            m_pParser->prepare(firstLines);
+        }
+
+        m_uTotalLines++;
+    }
+
+    if (m_uTotalLines < NUM_LINES_TO_ANALYZE) {
+        // make the best from what we've got
+        m_pParser->prepare(firstLines);
+    }
+
+    // finalize index
+    in.clear(); // reset error flags for final tellg to work
+    appendChunkHeader(ch, in.tellg());
+
+    // init last modification timestamp
     updateLastModified();
 
+    // trace some info
     qInfo() << "Lines:" << m_uTotalLines;
     qInfo() << "Chunks:" << m_Index.size();
 
@@ -145,121 +185,13 @@ void CLogFile::clear()
     m_uTotalLines = 0;
 }
 
-
-void CLogFile::analyze_ascii()
-{
-    std::ifstream in(m_sFileName.toStdString());
-
-    if (!in.good()) {
-        qDebug() << "Failed to open " << m_sFileName;
-        return;
-    }
-
-    SLogFileChunkHeader ch = {};
-    ch.offset = in.tellg();
-
-    std::vector<QString> firstLines;
-    firstLines.reserve(NUM_LINES_TO_ANALYZE);
-
-    char line [MAX_LINE_LENGTH];
-    while (in.getline(line, sizeof(line))) {
-
-        ch.lines++;
-        if (ch.lines == m_uLinesPerChunk) {
-            appendChunkHeader(ch, in.tellg());
-        }
-
-        if (m_uTotalLines < NUM_LINES_TO_ANALYZE) {
-            firstLines.push_back(line);
-        } else if (m_uTotalLines == NUM_LINES_TO_ANALYZE) {
-            m_pParser->prepare(firstLines);
-        }
-
-        m_uTotalLines++;
-    }
-
-    if (m_uTotalLines < NUM_LINES_TO_ANALYZE) {
-        // make the best from what we've got
-        m_pParser->prepare(firstLines);
-    }
-
-    in.clear(); // reset error flags for final tellg to work
-    appendChunkHeader(ch, in.tellg());
-}
-
-void CLogFile::analyze_utf8()
-{
-    std::locale old_locale;
-    std::locale utf8_locale(old_locale, new std::codecvt_utf8<wchar_t,0x10ffff, std::consume_header>);
-
-    std::wifstream in(m_sFileName.toStdString());
-    in.imbue(std::locale(utf8_locale));
-
-    if (!in.good()) {
-        qDebug() << "Failed to open " << m_sFileName;
-        return;
-    }
-
-    SLogFileChunkHeader ch = {};
-    ch.offset = in.tellg();
-
-    wchar_t line [MAX_LINE_LENGTH];
-    while (in.getline(line, sizeof(line))) {
-        m_uTotalLines++;
-        ch.lines++;
-        if (ch.lines == m_uLinesPerChunk) {
-            appendChunkHeader(ch, in.tellg());
-        }
-    }
-
-    in.clear(); // reset error flags for final tellg to work
-    appendChunkHeader(ch, in.tellg());
-}
-
-void CLogFile::analyze_generic()
-{
-    QFile file(m_sFileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "fuck";
-        return;
-    }
-
-    QTextStream in(&file);
-
-    /*
-     * TODO: pure readLineInto() is 1.5 times faster than readLine(),
-     * but still takes about 1024 ms for a 0.5 GB file
-     * on my i7 8th gen notebook with SSD. Compared to that,
-     * wc -l takes 200 ms, so there's room for optimization.
-     */
-    SLogFileChunkHeader ch = {};
-    ch.offset = in.pos();
-
-    while (in.readLineInto(nullptr)) {
-        m_uTotalLines++;
-        ch.lines++;
-        if (ch.lines == m_uLinesPerChunk) {
-            // TODO: QTextStream::pos() is dead slow and therefore unusuable for our use case !!! see
-            // https://www.qtcentre.org/threads/50675-solved-Alternatives-to-the-slow-QTextStream-pos()-method
-            // https://stackoverflow.com/questions/30327496/qtextstream-messing-its-position-pointer
-            qint64 offset = 666;//in.pos();
-            appendChunkHeader(ch, offset);
-        }
-    }
-
-    appendChunkHeader(ch, 666);
-
-    qDebug() << "Codec:" << in.codec()->name();
-}
-
 void CLogFile::appendChunkHeader(SLogFileChunkHeader& ch, offset_t offset)
 {
     if (ch.lines == 0) {
         // ignore empty chunks (can happen at file end)
         return;
     }
-    ch.bytes = static_cast<quint32>(offset - ch.offset);
-    //qDebug() << m_Index.size() << ch.offset << ch.bytes << ch.lines;
+    ch.bytes = static_cast<size_t>(offset - ch.offset);
     m_Index.push_back(ch);
     ch.offset = offset;
     ch.bytes = 0;
@@ -291,6 +223,12 @@ bool CLogFile::updateLastModified()
 
 void CLogFile::timer()
 {
+    /*
+     * NOTE: with our design of lazily loading the file by chunks,
+     * it is easier but still efficient to just discard everything
+     * and reload the whole file instead of determining what
+     * changed exactly.
+     */
     if (updateLastModified()) {
         load();
     }

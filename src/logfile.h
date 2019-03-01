@@ -66,9 +66,6 @@ signals:
 
 protected:
     void load();
-    void analyze_generic();
-    void analyze_ascii();
-    void analyze_utf8();
     void clear();
 
 protected slots:
