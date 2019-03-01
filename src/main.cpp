@@ -9,8 +9,13 @@
 
 #include "logfile.h"
 
+static QtMessageHandler s_DefaultMsgHandler;
+
 void displayLogMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    // call default handler
+    s_DefaultMsgHandler(type, context, msg);
+
     QString what;
     QMessageBox::Icon icon;
 
@@ -55,7 +60,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    qInstallMessageHandler(displayLogMessageHandler);
+    s_DefaultMsgHandler = qInstallMessageHandler(displayLogMessageHandler);
     qSetMessagePattern("%{time yyyy-MM-ddTHH:mm:ss.zzz} %{if-debug}D%{endif}%{if-info}I%{endif}%{if-warning}W%{endif}%{if-critical}C%{endif}%{if-fatal}F%{endif} %{file}:%{line} - %{message}");
 
     QApplication a(argc, argv);
