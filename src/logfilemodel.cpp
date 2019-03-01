@@ -14,31 +14,33 @@ CLogFileModel::CLogFileModel(QObject *parent, QString filename):
     m_sFilename(filename),
     m_LogFile(filename)
 {
-    connect(&m_LogFile, SIGNAL(changed()), this, SLOT(logfileChanged()));
+    connect(&m_LogFile, SIGNAL(grown(size_t, size_t)), this, SLOT(logFileGrown(size_t, size_t)));
 }
 
-void CLogFileModel::logfileChanged()
+void CLogFileModel::logFileGrown(size_t oldLineCount, size_t newLineCount)
 {
-    qDebug() << "logfileChanged";
-    beginResetModel();
-    endResetModel();
+    beginInsertRows(QModelIndex(), static_cast<int>(oldLineCount), static_cast<int>(newLineCount)-1);
+    endInsertRows();
 }
 
 int CLogFileModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   return m_LogFile.getEntryCount();
+   return static_cast<int>(m_LogFile.getEntryCount());
 }
 
 int CLogFileModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    return m_LogFile.getColumnCount();
+    return static_cast<int>(m_LogFile.getColumnCount());
 }
 
 QVariant CLogFileModel::data(const QModelIndex &index, int role) const
 {
+    size_t row = static_cast<size_t>(index.row());
+    size_t col = static_cast<size_t>(index.column());
+
     switch (role) {
         case Qt::DisplayRole: {
-            return m_LogFile.getItem(index.row(), index.column());
+            return m_LogFile.getItem(row, col);
         }
         case Qt::BackgroundRole: {
             //if (e.m_bAlternate) {

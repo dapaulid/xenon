@@ -119,6 +119,8 @@ SLogFileChunk* CLogFile::loadChunk(size_t index) const
 
 void CLogFile::load()
 {
+    size_t oldLineCount = m_uTotalLines;
+
     clear();
 
     //analyze_utf8();
@@ -127,10 +129,13 @@ void CLogFile::load()
 
     updateLastModified();
 
-    emit changed();
-
     qInfo() << "Lines:" << m_uTotalLines;
     qInfo() << "Chunks:" << m_Index.size();
+
+    size_t newLineCount = m_uTotalLines;
+    if (newLineCount > oldLineCount) {
+        emit grown(oldLineCount, newLineCount);
+    }
 }
 
 void CLogFile::clear()

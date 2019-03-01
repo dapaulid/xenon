@@ -22,7 +22,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 protected slots:
-    void logfileChanged();
+    void logFileGrown(size_t oldLineCount, size_t newLineCount);
 
 protected:
     QString m_sFilename;
