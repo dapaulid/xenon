@@ -15,10 +15,8 @@ public:
     explicit CMainWindow(QWidget *parent = nullptr);
     ~CMainWindow();
 
-private slots:
-    void model_rowsInserted(const QModelIndex & parent, int start, int end);
-    void on_tableView_doubleClicked(const QModelIndex &index);
-    void scrollToBottom();
+public slots:
+    void open(const QString& filename);
 
 private:
     Ui::CMainWindow *ui;

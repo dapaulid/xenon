@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     CMainWindow w;
+    w.open(QCoreApplication::arguments().at(1));
     w.show();
 
     return a.exec();

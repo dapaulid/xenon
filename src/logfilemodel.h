@@ -14,7 +14,7 @@ class CLogFileModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    CLogFileModel(QObject *parent, QString filename);
+    CLogFileModel(QObject *parent, const CLogFile& logfile);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -25,8 +25,7 @@ protected slots:
     void logFileChanged(size_t oldLineCount, size_t newLineCount);
 
 protected:
-    QString m_sFilename;
-    CLogFile m_LogFile;
+    const CLogFile& m_LogFile;
 };
 
 #endif // LOGFILEMODEL_H

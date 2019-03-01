@@ -9,10 +9,9 @@
 #include <QPalette>
 #include <QApplication>
 
-CLogFileModel::CLogFileModel(QObject *parent, QString filename):
+CLogFileModel::CLogFileModel(QObject *parent, const CLogFile& logfile):
     QAbstractTableModel(parent),
-    m_sFilename(filename),
-    m_LogFile(filename)
+    m_LogFile(logfile)
 {
     connect(&m_LogFile, SIGNAL(changed(size_t, size_t)), this, SLOT(logFileChanged(size_t, size_t)));
 }

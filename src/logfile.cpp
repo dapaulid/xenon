@@ -239,3 +239,9 @@ void CLogFile::timer()
         load();
     }
 }
+
+QString CLogFile::getDisplayName() const
+{
+    QFileInfo fi(m_sFileName);
+    return fi.fileName();
+}

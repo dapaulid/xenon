@@ -61,6 +61,8 @@ public:
     size_t getColumnCount() const;
     QString getColumnName(size_t index) const;
 
+    QString getDisplayName() const;
+
 signals:
     void changed(size_t oldLineCount, size_t newLineCount);
 

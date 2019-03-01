@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     logfilemodel.cpp \
     timestampparser.cpp \
     histogram.cpp \
-    timingstat.cpp
+    timingstat.cpp \
+    logfilewidget.cpp
 
 HEADERS  += mainwindow.h \
     logentryitemdelegate.h \
@@ -31,6 +32,8 @@ HEADERS  += mainwindow.h \
     logfilemodel.h \
     timestampparser.h \
     histogram.h \
-    timingstat.h
+    timingstat.h \
+    logfilewidget.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    logfilewidget.ui
