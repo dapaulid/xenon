@@ -68,6 +68,13 @@ QVariant CLogFileModel::data(const QModelIndex &index, int role) const
             }
             break;
         }
+        case Qt::ToolTipRole: {
+            QVariant item = m_LogFile.getItem(row, col);
+            if (item.type() == QVariant::DateTime) {
+                return item.toDateTime().toString(Qt::DateFormat::TextDate);
+            }
+            break;
+        }
     }
     return QVariant();
 }
