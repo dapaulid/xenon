@@ -20,6 +20,11 @@ CMainWindow::~CMainWindow()
 
 void CMainWindow::open(const QString& filename)
 {
-    CLogFileWidget* logFileWidget = new CLogFileWidget(this, filename);
+    CLogFileWidget* logFileWidget = new CLogFileWidget(ui->tabWidget, filename);
     ui->tabWidget->addTab(logFileWidget, logFileWidget->getDisplayName());
+}
+
+void CMainWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    ui->tabWidget->removeTab(index);
 }

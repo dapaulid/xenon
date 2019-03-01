@@ -18,6 +18,9 @@ public:
 public slots:
     void open(const QString& filename);
 
+private slots:
+    void on_tabWidget_tabCloseRequested(int index);
+
 private:
     Ui::CMainWindow *ui;
 };
