@@ -48,9 +48,11 @@ void CMainWindow::open(const QString& filename)
     }
 
     // create new log file widget
-    CLogFileWidget* logFileWidget = new CLogFileWidget(this, filename);
+    CLogFileWidget* lfw = new CLogFileWidget(this, filename);
     // create new tab for it
-    int tabIndex = ui->tabWidget->addTab(logFileWidget, logFileWidget->getDisplayName());
+    int tabIndex = ui->tabWidget->addTab(lfw, lfw->getDisplayName());
+    // set filename as tooltip
+    ui->tabWidget->setTabToolTip(tabIndex, lfw->getFileName());
     // bring it to front
     ui->tabWidget->setCurrentIndex(tabIndex);
 
