@@ -61,6 +61,9 @@ public:
     size_t getColumnCount() const;
     QString getColumnName(size_t index) const;
 
+    const QString& getFileName() const {
+        return m_sFileName;
+    }
     QString getDisplayName() const;
 
 signals:

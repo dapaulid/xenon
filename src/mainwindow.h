@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "logfilewidget.h"
+
 namespace Ui {
 class CMainWindow;
 }
@@ -13,10 +15,21 @@ class CMainWindow : public QMainWindow
 
 public:
     explicit CMainWindow(QWidget *parent = nullptr);
-    ~CMainWindow();
+    virtual ~CMainWindow() override;
+
+    int getTabCount() const;
+    const CLogFileWidget* getTab(int index) const;
 
 public slots:
     void open(const QString& filename);
+
+protected slots:
+    void readSettings();
+    void writeSettings() const;
+
+// overrides
+protected:
+    virtual void closeEvent(QCloseEvent* event) override;
 
 private slots:
     void on_tabWidget_tabCloseRequested(int index);

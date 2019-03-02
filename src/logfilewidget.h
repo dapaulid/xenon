@@ -17,6 +17,9 @@ public:
     explicit CLogFileWidget(QWidget *parent, const QString& fileName);
     ~CLogFileWidget();
 
+    const QString& getFileName() const {
+        return m_LogFile.getFileName();
+    }
     QString getDisplayName() const {
         return m_LogFile.getDisplayName();
     }
