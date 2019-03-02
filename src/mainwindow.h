@@ -30,6 +30,8 @@ protected slots:
 // overrides
 protected:
     virtual void closeEvent(QCloseEvent* event) override;
+    virtual void dragEnterEvent(QDragEnterEvent* event) override;
+    virtual void dropEvent(QDropEvent* event) override;
 
 private slots:
     void on_tabWidget_tabCloseRequested(int index);

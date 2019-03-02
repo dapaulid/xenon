@@ -1,8 +1,11 @@
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QDrag>
+#include <QMimeData>
 #include <QSettings>
 #include <QVariant>
 #include <QDebug>
+
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -91,6 +94,29 @@ void CMainWindow::closeEvent(QCloseEvent* event)
 {
     writeSettings();
     event->accept();
+}
+
+void CMainWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+    if (event->mimeData()->hasFormat("text/plain")) {
+        event->acceptProposedAction();
+    }
+}
+
+void CMainWindow::dropEvent(QDropEvent *event)
+{
+    // check for our needed mime type, here a file or a list of files
+    if (event->mimeData()->hasUrls()) {
+        QStringList pathList;
+        QList<QUrl> urlList = event->mimeData()->urls();
+
+        // open by local paths of the files
+        for (int i = 0; i < urlList.size(); i++) {
+            open(urlList.at(i).toLocalFile());
+        }
+    }
+
+    event->acceptProposedAction();
 }
 
 int CMainWindow::getTabCount() const
