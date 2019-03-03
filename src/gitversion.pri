@@ -16,21 +16,21 @@ win32 {
 BASE_GIT_COMMAND = git --git-dir $$PWD/../.git --work-tree $$PWD
 
 # Trying to get version from git tag / revision
-GIT_VERSION = $$system($$BASE_GIT_COMMAND describe --always --tags --dirty 2> $$NULL_DEVICE)
+GIT_VERSION = $$system($$BASE_GIT_COMMAND describe --always --long --dirty 2> $$NULL_DEVICE)
 
 # Check if we only have hash without version number
-!contains(GIT_VERSION,\d+\.\d+\.\d+) {
-    # If there is nothing we simply use version defined manually
-    isEmpty(GIT_VERSION) {
-        GIT_VERSION = $$VERSION
-    } else { # otherwise construct proper git describe string
-        GIT_COMMIT_COUNT = $$system($$BASE_GIT_COMMAND rev-list HEAD --count 2> $$NULL_DEVICE)
-        isEmpty(GIT_COMMIT_COUNT) {
-            GIT_COMMIT_COUNT = 0
-        }
-        GIT_VERSION = $$VERSION-$$GIT_COMMIT_COUNT-g$$GIT_VERSION
-    }
-}
+#!contains(GIT_VERSION, .) {#
+#    # If there is nothing we simply use version defined manually
+#    isEmpty(GIT_VERSION) {
+#        GIT_VERSION = $$VERSION
+#    } else { # otherwise construct proper git describe string
+#        GIT_COMMIT_COUNT = $$system($$BASE_GIT_COMMAND rev-list HEAD --count 2> $$NULL_DEVICE)
+#        isEmpty(GIT_COMMIT_COUNT) {
+#            GIT_COMMIT_COUNT = 0
+#        }
+#        GIT_VERSION = $$VERSION-$$GIT_COMMIT_COUNT-g$$GIT_VERSION
+#    }
+#}
 
 # Turns describe output like 0.1.5-42-g652c397 into "0.1.5.42.652c397"
 #GIT_VERSION ~= s/-/"."
