@@ -67,6 +67,8 @@ void CMainWindow::readSettings()
     qInfo("loading application settings");
     QSettings settings;
 
+    restoreGeometry(settings.value("geometry").toByteArray());
+
     // restore open tabs
     QStringList openTabs = settings.value("openTabs").toStringList();
     foreach (QString tab, openTabs) {
@@ -78,6 +80,8 @@ void CMainWindow::writeSettings() const
 {
     qInfo("saving application settings");
     QSettings settings;
+
+    settings.setValue("geometry", saveGeometry());
 
     // persist open tabs
     QStringList openTabs;
