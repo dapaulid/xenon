@@ -143,3 +143,10 @@ void CMainWindow::on_action_Open_triggered()
         open(fileName);
     }
 }
+
+#include <QMessageBox>
+
+void CMainWindow::on_actionAbout_triggered()
+{
+
+}

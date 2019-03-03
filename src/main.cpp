@@ -55,6 +55,11 @@ void displayLogMessageHandler(QtMsgType type, const QMessageLogContext &context,
 
 int main(int argc, char *argv[])
 {
+    // set application info
+    QCoreApplication::setApplicationName("Xenon Log File Viewer");
+    QCoreApplication::setOrganizationName("dapaulid");
+    QCoreApplication::setApplicationVersion(GIT_VERSION);
+
     if (argc > 2 && strcmp(argv[1], "-i") == 0) {
         CLogFile lf(argv[2]);
         return 0;
@@ -65,9 +70,16 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
+    // trace version info
+    qInfo("Starting %s, version %s",
+        QCoreApplication::applicationName().toLatin1().data(),
+        QCoreApplication::applicationVersion().toLatin1().data());
+
     CMainWindow w;
     w.open(QCoreApplication::arguments().at(1));
     w.show();
+
+    QString version(GIT_VERSION);
 
     return a.exec();
 }

@@ -38,6 +38,8 @@ private slots:
 
     void on_action_Open_triggered();
 
+    void on_actionAbout_triggered();
+
 private:
     Ui::CMainWindow *ui;
 };

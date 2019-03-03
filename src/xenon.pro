@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = xenon
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     logentryitemdelegate.cpp \
@@ -37,3 +36,8 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     logfilewidget.ui
+
+DISTFILES += \
+    gitversion.pri
+
+include(gitversion.pri)
