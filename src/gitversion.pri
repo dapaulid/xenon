@@ -13,7 +13,7 @@ win32 {
 }
 
 # Need to call git with manually specified paths to repository
-BASE_GIT_COMMAND = git --git-dir $$PWD/../.git --work-tree $$PWD
+BASE_GIT_COMMAND = git --git-dir $$PWD/../.git --work-tree $$PWD/..
 
 # Trying to get version from git tag / revision
 GIT_VERSION = $$system($$BASE_GIT_COMMAND describe --always --long --dirty 2> $$NULL_DEVICE)
