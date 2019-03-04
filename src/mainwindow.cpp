@@ -11,6 +11,7 @@
 #include "ui_mainwindow.h"
 
 #include "logfilewidget.h"
+#include "aboutdialog.h"
 
 CMainWindow::CMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -152,5 +153,7 @@ void CMainWindow::on_action_Open_triggered()
 
 void CMainWindow::on_actionAbout_triggered()
 {
-
+    qDebug() << "Foobar";
+    CAboutDialog about(this);
+    about.exec();
 }

@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     timestampparser.cpp \
     histogram.cpp \
     timingstat.cpp \
-    logfilewidget.cpp
+    logfilewidget.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     logentryitemdelegate.h \
@@ -32,10 +33,12 @@ HEADERS  += mainwindow.h \
     timestampparser.h \
     histogram.h \
     timingstat.h \
-    logfilewidget.h
+    logfilewidget.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
-    logfilewidget.ui
+    logfilewidget.ui \
+    aboutdialog.ui
 
 DISTFILES += \
     gitversion.pri
