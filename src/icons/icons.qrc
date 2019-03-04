@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>outline-exit_to_app-24px.svg</file>
+        <file>outline-filter_list-24px.svg</file>
+        <file>outline-info-24px.svg</file>
+        <file>outline-folder_open-24px.svg</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>

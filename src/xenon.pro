@@ -44,3 +44,6 @@ DISTFILES += \
     gitversion.pri
 
 include(gitversion.pri)
+
+RESOURCES += \
+    icons/icons.qrc

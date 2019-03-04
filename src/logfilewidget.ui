@@ -92,8 +92,15 @@
           </item>
           <item>
            <widget class="QPushButton" name="btnFilter">
-            <property name="text">
+            <property name="toolTip">
              <string>Filter</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="icons/icons.qrc">
+              <normaloff>:/icons/outline-filter_list-24px.svg</normaloff>:/icons/outline-filter_list-24px.svg</iconset>
             </property>
            </widget>
           </item>
@@ -118,6 +125,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
