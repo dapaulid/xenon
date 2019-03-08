@@ -109,7 +109,7 @@
   <action name="action_Open">
    <property name="icon">
     <iconset resource="icons/icons.qrc">
-     <normaloff>:/icons/baseline-folder_open-24px.svg</normaloff>:/icons/baseline-folder_open-24px.svg</iconset>
+     <normaloff>:/icons/outline-folder_open-24px.svg</normaloff>:/icons/outline-folder_open-24px.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
