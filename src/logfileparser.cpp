@@ -43,12 +43,15 @@ size_t getColumnIndex(const QString& str, int index)
 
 QString getColumn(const QString& str, size_t column, size_t columnCount)
 {
+    bool bIsFirstColumn = column == 0;
     bool bIsLastColumn = column == columnCount-1;
     int i = 0;
     while (i < str.length()) {
-        // consume leading whitespace
-        while (i < str.length() && str[i].isSpace()) {
-            i++;
+        if (!bIsFirstColumn) {
+            // consume leading whitespace
+            while (i < str.length() && str[i].isSpace()) {
+                i++;
+            }
         }
         // consume non-whitespace
         // TODO handle escaping
