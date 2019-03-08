@@ -77,8 +77,8 @@ SLogFileChunk* CLogFile::accessChunk(size_t index) const
         pChunk = loadChunk(index);
         m_Chunks.insert(index, pChunk);
         double elapsed = m_CacheStat.stop();
-        qDebug("chunk #%lu loaded, took %0.3f ms (MIN=%0.3f|MEAN=%0.3f|MAX=%0.3f)",
-            index, elapsed, m_CacheStat.min(), m_CacheStat.mean(), m_CacheStat.max());
+        qDebug("chunk #%lu loaded (%lu lines), took %0.3f ms (MIN=%0.3f|MEAN=%0.3f|MAX=%0.3f)",
+            index, pChunk->entries.size(), elapsed, m_CacheStat.min(), m_CacheStat.mean(), m_CacheStat.max());
     }
     return pChunk;
 }
@@ -142,7 +142,8 @@ void CLogFile::load()
     while (in.getline(line, sizeof(line))) {
 
         // index into chunks
-        if (ch.lines++ == m_uLinesPerChunk) {
+        ch.lines++;
+        if (ch.lines == m_uLinesPerChunk) {
             appendChunkHeader(ch, in.tellg());
         }
 
