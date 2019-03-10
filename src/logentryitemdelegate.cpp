@@ -51,6 +51,7 @@ void CLogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     QVariant data = index.data();
     const QAbstractItemModel* pModel = index.model();
     int row = index.row();
+    int col = index.column();
 
     // do we need to render a timestamp?
     if (data.userType() == QMetaType::QDateTime) {
@@ -69,6 +70,11 @@ void CLogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         if (pHighlighter->GetBackColor().isValid()) {
             painter->fillRect(option.rect, pHighlighter->GetBackColor());
         }
+    }
+
+    // use alternate color for colums other than the last (text)
+    if (col != pModel->columnCount()-1) {
+        painter->fillRect(option.rect, option.palette.alternateBase());
     }
 
     // draw control explicitly rather than calling base to handle

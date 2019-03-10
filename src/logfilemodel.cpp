@@ -60,13 +60,6 @@ QVariant CLogFileModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole: {
             return m_LogFile.getItem(row, col);
         }
-        case Qt::BackgroundRole: {
-            //if (e.m_bAlternate) {
-            if (index.column() == 0) {
-                return QPalette().brush(QPalette::AlternateBase);
-            }
-            break;
-        }
         case Qt::ToolTipRole: {
             QVariant item = m_LogFile.getItem(row, col);
             if (item.type() == QVariant::DateTime) {
