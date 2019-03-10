@@ -46,4 +46,5 @@ DISTFILES += \
 include(gitversion.pri)
 
 RESOURCES += \
-    icons/icons.qrc
+    icons/icons.qrc \
+    res/BreezeStyleSheets/breeze.qrc

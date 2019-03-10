@@ -75,6 +75,12 @@ int main(int argc, char *argv[])
         QCoreApplication::applicationName().toLatin1().data(),
         QCoreApplication::applicationVersion().toLatin1().data());
 
+    // set stylesheet
+    QFile file(":/dark.qss");
+    file.open(QFile::ReadOnly | QFile::Text);
+    QTextStream stream(&file);
+    a.setStyleSheet(stream.readAll());
+
     CMainWindow w;
     w.open(QCoreApplication::arguments().at(1));
     w.show();
