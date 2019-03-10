@@ -12,13 +12,15 @@
 CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
     QWidget(parent),
     ui(new Ui::CLogFileWidget),
-    m_LogFile(fileName)
+    m_LogFile(fileName),
+    m_FilterModel()
 {
     ui->setupUi(this);
 
-    QAbstractTableModel* model = new CLogFileModel(this, m_LogFile);
+    m_FilterModel.setSourceModel(new CLogFileModel(this, m_LogFile));
+    m_FilterModel.setFilterKeyColumn(m_FilterModel.columnCount()-1);
     QObject::connect(
-        model, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
+        &m_FilterModel, SIGNAL(rowsInserted(const QModelIndex&,int,int)),
         this, SLOT(model_rowsInserted(const QModelIndex&,int,int)) // NO on_ !!!!
     );
 
@@ -43,7 +45,7 @@ CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
 
     // init master tableview
     ui->tblMaster->setItemDelegate(new CLogEntryItemDelegate(ui->tblMaster, pHighlighters));
-    ui->tblMaster->setModel(model);
+    ui->tblMaster->setModel(&m_FilterModel);
 
     // don't allow to change row heights
     ui->tblMaster->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -58,7 +60,8 @@ CLogFileWidget::~CLogFileWidget()
 
 void CLogFileWidget::applyFilter()
 {
-    ui->lblCount->setText(QString("%1 of %2 lines").arg(0).arg(m_LogFile.getEntryCount()));
+    m_FilterModel.setFilterRegularExpression(ui->cbxFilter->currentText());
+ui->lblCount->setText(QString("%1 of %2 lines").arg(m_FilterModel.rowCount()).arg(m_LogFile.getEntryCount()));
 }
 
 void CLogFileWidget::model_rowsInserted(const QModelIndex & parent, int start, int end) {

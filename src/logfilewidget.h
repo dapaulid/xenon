@@ -2,6 +2,7 @@
 #define LOGFILEWIDGET_H
 
 #include <QWidget>
+#include <QSortFilterProxyModel>
 
 #include "logfile.h"
 
@@ -33,6 +34,7 @@ private slots:
 private:
     Ui::CLogFileWidget *ui;
     CLogFile m_LogFile;
+    QSortFilterProxyModel m_FilterModel;
 };
 
 #endif // LOGFILEWIDGET_H
