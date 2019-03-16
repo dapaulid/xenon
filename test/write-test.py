@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 
+import os
 import time
+
+if not os.path.exists("generated"):
+    os.makedirs("generated")
+# end if
 
 print("Writing output...")
 
 entry = 0
-with open("test.log", "w") as text_file:
+with open("generated/test.log", "w") as text_file:
 	while True:
 		entry += 1
 		if entry % 8 != 0:
