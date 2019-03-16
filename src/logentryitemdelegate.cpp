@@ -60,7 +60,7 @@ void CLogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     }
 
     // highlight according to text
-    QString str = pModel->index(row, 1).data().toString();
+    QString str = pModel->index(row, pModel->columnCount()-1).data().toString();
     CHighlighter* pHighlighter = m_pHighlighters->Match(str);
     if (pHighlighter) {
         opt.font.setBold(true);
