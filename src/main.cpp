@@ -82,7 +82,6 @@ int main(int argc, char *argv[])
     a.setStyleSheet(stream.readAll());
 
     CMainWindow w;
-    w.open(QCoreApplication::arguments().at(1));
     w.show();
 
     QString version(GIT_VERSION);
