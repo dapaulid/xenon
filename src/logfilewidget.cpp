@@ -26,7 +26,7 @@ CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
     );
 
     // connect filter controls
-    connect(ui->cbxFilter->lineEdit(), &QLineEdit::editingFinished, this, &CLogFileWidget::applyFilter);
+    connect(ui->cbxFilter->lineEdit(), &QLineEdit::returnPressed, this, &CLogFileWidget::applyFilter);
     connect(ui->btnFilter, &QPushButton::clicked, this, &CLogFileWidget::applyFilter);
 
     // init highlighters
@@ -61,7 +61,13 @@ CLogFileWidget::~CLogFileWidget()
 
 void CLogFileWidget::applyFilter()
 {
-    m_FilterModel.setFilterRegularExpression(ui->cbxFilter->currentText());
+    ui->cbxFilter->lineEdit()->selectAll();
+    QRegularExpression re(ui->cbxFilter->currentText());
+    if (!re.isValid()) {
+        qCritical("Invalid regular expression: %s",  qUtf8Printable(re.errorString()));
+        return;
+    }
+    m_FilterModel.setFilterRegularExpression(re);
 	ui->lblCount->setText(QString("%1 of %2 lines").arg(m_FilterModel.rowCount()).arg(m_LogFile.getEntryCount()));
 }
 
