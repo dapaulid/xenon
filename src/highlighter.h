@@ -1,17 +1,21 @@
 #ifndef HIGHLIGHTER_H
 #define HIGHLIGHTER_H
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QColor>
 #include <QMap>
 
 class CHighlighter
 {
 public:
-    CHighlighter(const QString& aName);
+    CHighlighter(const QString& aName, bool abFullLine);
 
     const QString& GetName() const {
         return m_Name;
+    }
+
+    bool isFullLine() const {
+        return m_bFullLine;
     }
 
     void SetPattern(const QString& aPattern) {
@@ -38,9 +42,12 @@ public:
         return str.contains(m_RegExp);
     }
 
+    bool highlight(QString& str);
+
 protected:
     QString m_Name;
-    QRegExp m_RegExp;
+    bool m_bFullLine;
+    QRegularExpression m_RegExp;
     QColor m_TextColor;
     QColor m_BackColor;
 };
@@ -53,6 +60,12 @@ public:
     void Add(CHighlighter* apHighlighter);
 
     CHighlighter* Match(const QString& str);
+
+    QString styleSheet() const;
+
+    CHighlighter* get(const QString& name) {
+        return m_Entries[name];
+    }
 
 protected:
     QMap<QString, CHighlighter*> m_Entries;

@@ -7,14 +7,14 @@
 
 #include "logfilemodel.h"
 #include "logentryitemdelegate.h"
-#include "highlighter.h"
 
 
 CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
     QWidget(parent),
     ui(new Ui::CLogFileWidget),
     m_LogFile(fileName),
-    m_FilterModel()
+    m_FilterModel(),
+    m_pMarkHiLi(nullptr)
 {
     ui->setupUi(this);
 
@@ -31,14 +31,20 @@ CLogFileWidget::CLogFileWidget(QWidget *parent, const QString& fileName):
 
     // init highlighters
     Highlighters* pHighlighters = new Highlighters;
-    CHighlighter* pErrorHiLi = new CHighlighter("error");
+    CHighlighter* pErrorHiLi = new CHighlighter("error", true);
     pErrorHiLi->SetPattern("error");
     pErrorHiLi->SetTextColor(Qt::red);
     pHighlighters->Add(pErrorHiLi);
-    CHighlighter* pWarningHiLi = new CHighlighter("warning");
+    CHighlighter* pWarningHiLi = new CHighlighter("warning", true);
     pWarningHiLi->SetPattern("warning");
-    pWarningHiLi->SetTextColor(QColor("orange"));
+    pWarningHiLi->SetBackColor(QColor("orange"));
     pHighlighters->Add(pWarningHiLi);
+
+    m_pMarkHiLi = new CHighlighter("mark", false);
+    //m_pMarkHiLi->SetPattern("entry");
+    m_pMarkHiLi->SetTextColor(Qt::black);
+    m_pMarkHiLi->SetBackColor(Qt::yellow);
+    pHighlighters->Add(m_pMarkHiLi);
 
     // set tableview proportions
     ui->splitter->setStretchFactor(0, 3);
@@ -62,12 +68,15 @@ CLogFileWidget::~CLogFileWidget()
 void CLogFileWidget::applyFilter()
 {
     ui->cbxFilter->lineEdit()->selectAll();
-    QRegularExpression re(ui->cbxFilter->currentText());
+    QString pattern = ui->cbxFilter->currentText();
+    QRegularExpression re(pattern);
     if (!re.isValid()) {
         qCritical("Invalid regular expression: %s",  qUtf8Printable(re.errorString()));
         return;
     }
-    m_FilterModel.setFilterRegularExpression(re);
+    //m_FilterModel.setFilterRegularExpression(re);
+    m_pMarkHiLi->SetPattern(pattern);
+    ui->tblMaster->update();
 	ui->lblCount->setText(QString("%1 of %2 lines").arg(m_FilterModel.rowCount()).arg(m_LogFile.getEntryCount()));
 }
 

@@ -5,6 +5,7 @@
 #include <QSortFilterProxyModel>
 
 #include "logfile.h"
+#include "highlighter.h"
 
 namespace Ui {
 class CLogFileWidget;
@@ -35,6 +36,7 @@ private:
     Ui::CLogFileWidget *ui;
     CLogFile m_LogFile;
     QSortFilterProxyModel m_FilterModel;
+    CHighlighter* m_pMarkHiLi;
 };
 
 #endif // LOGFILEWIDGET_H

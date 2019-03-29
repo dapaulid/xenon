@@ -4,12 +4,15 @@
 #include <QTextDocument>
 #include <QTableView>
 #include <QDateTime>
+#include <QDebug>
 
 CLogEntryItemDelegate::CLogEntryItemDelegate(QTableView* apTableView, Highlighters* apHighlighters):
     QStyledItemDelegate(apTableView),
     m_pTableView(apTableView),
     m_pHighlighters(apHighlighters),
-    m_LinePen()
+    m_pMarkHiLi(nullptr),
+    m_LinePen(),
+    m_Doc()
 {
     // get color for grid line pen
     // TODO is there a less ugly way?
@@ -17,6 +20,29 @@ CLogEntryItemDelegate::CLogEntryItemDelegate(QTableView* apTableView, Highlighte
     int gridHint = m_pTableView->style()->styleHint(QStyle::SH_Table_GridLineColor, &opt);
     QColor gridColor = static_cast<QRgb>(gridHint);
     m_LinePen = QPen(gridColor, 0, m_pTableView->gridStyle());
+    m_Doc.setDefaultStyleSheet(m_pHighlighters->styleSheet());
+    m_pMarkHiLi = m_pHighlighters->get("mark");
+}
+
+#include <QAbstractTextDocumentLayout>
+
+void drawContents(QTextDocument *td, QPainter *p, const QRectF &rect, const QPalette& palette)
+{
+p->save();
+QAbstractTextDocumentLayout::PaintContext ctx;
+
+//ctx.palette.setColor(QPalette::Text, p->pen().color());
+ctx.palette = palette;
+
+
+if (rect.isValid())
+{
+    p->setClipRect(rect);
+    ctx.clip = rect;
+}
+
+td->documentLayout()->draw(p, ctx);
+p->restore();
 }
 
 
@@ -77,10 +103,26 @@ void CLogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         painter->fillRect(option.rect, option.palette.alternateBase());
     }
 
+    painter->save();
+
+    //doc.setDefaultStyleSheet("i { color : green; background-color : black; }");
+    m_Doc.setDefaultFont(opt.font);
+    QString html = opt.text.toHtmlEscaped();
+    m_pMarkHiLi->highlight(html);
+    m_Doc.setHtml(html);
+
     // draw control explicitly rather than calling base to handle
     // overwritten text in opt.text
     //QStyledItemDelegate::paint(painter, opt, index);
+    opt.text = "";
     opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
+
+    painter->translate(opt.rect.left(), opt.rect.top());
+    QRect clip(0, 0, opt.rect.width(), opt.rect.height());
+    //doc.drawContents(painter, clip);
+    drawContents(&m_Doc, painter, clip, opt.palette);
+
+    painter->restore();
 
     // get timestamp associated with this row
     QDateTime ts = pModel->index(row, 0).data().toDateTime();

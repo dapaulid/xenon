@@ -4,6 +4,7 @@
 #include <QStyledItemDelegate>
 #include <QTableView>
 #include <QPen>
+#include <QTextDocument>
 
 #include "highlighter.h"
 
@@ -20,7 +21,9 @@ class CLogEntryItemDelegate : public QStyledItemDelegate
     protected:
         QTableView* m_pTableView;
         Highlighters* m_pHighlighters;
+        CHighlighter* m_pMarkHiLi;
         QPen m_LinePen;
+        mutable QTextDocument m_Doc;
 };
 
 #endif // LOGENTRYITEMDELEGATE_H
