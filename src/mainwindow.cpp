@@ -75,6 +75,7 @@ void CMainWindow::readSettings()
     foreach (QString tab, openTabs) {
         open(tab);
     }
+    ui->tabWidget->setCurrentIndex(settings.value("currentTab").toInt());
 }
 
 void CMainWindow::writeSettings() const
@@ -93,6 +94,7 @@ void CMainWindow::writeSettings() const
         }
     }
     settings.setValue("openTabs", openTabs);
+    settings.setValue("currentTab", ui->tabWidget->currentIndex());
 }
 
 void CMainWindow::closeEvent(QCloseEvent* event)
