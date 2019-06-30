@@ -72,12 +72,12 @@ SLogFileChunk* CLogFile::accessChunk(size_t index) const
     SLogFileChunk* pChunk = m_Chunks[index];
     if (!pChunk) {
         // no -> load and add it
-        qDebug("cache miss, loading chunk #%lu", index);
+        qDebug("cache miss, loading chunk #%zu", index);
         m_CacheStat.start();
         pChunk = loadChunk(index);
         m_Chunks.insert(index, pChunk);
         double elapsed = m_CacheStat.stop();
-        qDebug("chunk #%lu loaded (%lu lines), took %0.3f ms (MIN=%0.3f|MEAN=%0.3f|MAX=%0.3f)",
+        qDebug("chunk #%zu loaded (%zu lines), took %0.3f ms (MIN=%0.3f|MEAN=%0.3f|MAX=%0.3f)",
             index, pChunk->entries.size(), elapsed, m_CacheStat.min(), m_CacheStat.mean(), m_CacheStat.max());
     }
     return pChunk;

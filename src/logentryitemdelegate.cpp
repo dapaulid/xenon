@@ -80,7 +80,7 @@ void CLogEntryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     int col = index.column();
 
     // do we need to render a timestamp?
-    if (data.userType() == QMetaType::QDateTime) {
+    if (data.type() == QVariant::DateTime) {
         // yes -> override text with formatted timestamp
         opt.text = data.toDateTime().toString("hh:mm:ss.zzz");
     }

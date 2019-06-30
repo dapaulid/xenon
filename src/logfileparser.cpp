@@ -85,10 +85,10 @@ void CLogFileParser::prepare(const std::vector<QString>& lines)
         if (match.hasMatch()) {
             qDebug() <<  match.captured(1);
             uColumnCount = getColumnIndex(line, match.capturedStart(1))+1;
-            qDebug("Line %lu: Columns = %lu", i+1, uColumnCount);
+            qDebug("Line %zu: Columns = %zu", i+1, uColumnCount);
         } else {
             uColumnCount = 1;
-            qDebug("Line %lu: Columns = %lu (no match)", i+1, uColumnCount);
+            qDebug("Line %zu: Columns = %zu (no match)", i+1, uColumnCount);
         }
         hist.insert(uColumnCount);
     }
