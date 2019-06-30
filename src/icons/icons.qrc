@@ -4,6 +4,9 @@
         <file>outline-filter_list-24px.svg</file>
         <file>outline-info-24px.svg</file>
         <file>outline-folder_open-24px.svg</file>
+        <file>folder_page_white.png</file>
+        <file>information.png</file>
+        <file>find.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

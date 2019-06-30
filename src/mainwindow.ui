@@ -88,8 +88,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>16</width>
+     <height>16</height>
     </size>
    </property>
    <property name="floatable">
@@ -109,7 +109,7 @@
   <action name="action_Open">
    <property name="icon">
     <iconset resource="icons/icons.qrc">
-     <normaloff>:/icons/outline-folder_open-24px.svg</normaloff>:/icons/outline-folder_open-24px.svg</iconset>
+     <normaloff>:/icons/folder_page_white.png</normaloff>:/icons/folder_page_white.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
@@ -121,7 +121,7 @@
   <action name="actionAbout">
    <property name="icon">
     <iconset resource="icons/icons.qrc">
-     <normaloff>:/icons/outline-info-24px.svg</normaloff>:/icons/outline-info-24px.svg</iconset>
+     <normaloff>:/icons/information.png</normaloff>:/icons/information.png</iconset>
    </property>
    <property name="text">
     <string>About...</string>
